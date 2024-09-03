@@ -1,0 +1,64 @@
+/* FooterBar.css */
+.footer-bar {
+    background-color: #333;
+    color: #f3f3f3;
+    padding: 1rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 10;
+  }
+  
+  .footer-nav {
+    list-style: none;
+    display: flex;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer-nav li {
+    margin: 0 0.5rem;
+  }
+  
+  .footer-nav a {
+    text-decoration: none;
+    color: #f3f3f3;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .footer-nav a:hover {
+    background-color: #575757;
+  }
+  
+  .footer-nav a img {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 0.5rem;
+  }
+  
+  @media (max-width: 600px) {
+    .footer-bar {
+      flex-direction: row; 
+      flex-wrap: wrap; 
+    }
+  
+    .footer-nav {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center; 
+    }
+  
+    .footer-nav li {
+      margin: 0.5rem;
+    }
+  }
+  

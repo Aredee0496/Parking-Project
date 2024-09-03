@@ -1,0 +1,28 @@
+/* Sidebar.css */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.sidebar {
+  height: 100vh; /* Full height of the viewport */
+  width: 250px; /* Adjust width as needed */
+  background-color: #001529; /* Sidebar background color */
+  position: fixed; /* Keep the sidebar fixed on the left */
+  top: 0; /* Align to the top */
+  left: 0; /* Align to the left */
+  overflow: auto; /* Add scroll if the content exceeds the viewport */
+}
+
+.ant-menu {
+  border: none; /* Remove border */
+}
+
+.ant-menu-item, .ant-menu-submenu-title {
+  color: #fff; /* Text color */
+}
+
+.ant-menu-item:hover, .ant-menu-submenu-title:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* Hover background color */
+}
+

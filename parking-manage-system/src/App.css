@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+  background-color: #ececec;
+  margin: 0; /* Remove default margin */
+  font-family: "kanit", sans-serif; /* Set a default font */
+}
+
+.app {
+  display: flex;
+  flex-direction: row; /* Align items in a row */
+}
+
+.main-content {
+  flex-grow: 1;
+  margin-left: 250px; /* Margin for sidebar */
+  padding: 20px;
+  transition: margin-left 0.3s ease; /* Smooth transition for margin change */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .app {
+    flex-direction: column; /* Stack items vertically */
+  }
+
+  .main-content {
+    margin-left: 0; /* Remove left margin on small screens */
+    padding: 10px; /* Adjust padding for smaller screens */
+  }
+}
+
+/* Media query for very small screens */
+@media (max-width: 480px) {
+  .main-content {
+    padding: 5px; /* Further reduce padding */
+  }
+}
