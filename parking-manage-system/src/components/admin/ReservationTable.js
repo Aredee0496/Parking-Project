@@ -11,7 +11,7 @@ function ReservationTable() {
   const [loading, setLoading] = useState(true);
   const { user: currentUser } = useAuth();
   const [cars, setCars] = useState([]);
-  const [selectedCarIds, setSelectedCarIds] = useState({}); // Track selected Car_IDs
+  const [selectedCarIds, setSelectedCarIds] = useState({});
 
   useEffect(() => {
     const fetchReservations = async () => {
@@ -40,7 +40,7 @@ function ReservationTable() {
   }, []);
 
   const handleCheckIn = async (id) => {
-    const carId = selectedCarIds[id]; // Get the selected Car_ID for the specific reservation
+    const carId = selectedCarIds[id]; 
 
     if (!carId) {
       message.error('Please select a car before checking in.');
@@ -50,12 +50,11 @@ function ReservationTable() {
     try {
       await axios.put(`http://localhost:5000/api/deposits/${id}`, {
         Car_ID: carId,
-        Checkin_DateTime: dayjs().toISOString(),  
+        Checkin_DateTime: dayjs().format('YYYY-MM-DDTHH:mm:ss'),  
         Officer_ID: currentUser.id, 
         DepositStatus_ID: 2,
       });
 
-      // Fetch updated reservations after successful check-in
       const response = await axios.get('http://localhost:5000/api/deposits');
       const filteredReservations = response.data.filter(reservation => reservation.DepositStatus_ID === 1);
       setReservations(filteredReservations);

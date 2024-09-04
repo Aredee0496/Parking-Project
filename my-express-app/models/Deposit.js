@@ -43,10 +43,9 @@ const Deposit = {
         type t ON d.Type_ID = t.Type_ID
       LEFT JOIN 
         car ON d.Car_ID = car.Car_ID
-      WHERE 
-        d.Customer_ID = ?`;
-
+      WHERE d.Deposit_ID = ?`;
     db.query(query, [id], (err, results) => {
+      console.log(err)
       if (err) {
         return callback(err, null);
       }
@@ -119,7 +118,7 @@ getBooking: (id, callback) => {
     callback(null, results[0]);
   });
 },
-
+ 
   create: (data, callback) => {
     db.query(
       "SELECT Deposit_ID FROM deposit ORDER BY Deposit_ID DESC LIMIT 1",
