@@ -1,28 +1,49 @@
 import React from 'react';
-import { Link, Route, Routes, Navigate } from 'react-router-dom';
+import { Link, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import { Button } from 'antd';
+import { BookOutlined, CheckCircleOutlined, CheckSquareOutlined } from '@ant-design/icons';
 import ReservationTable from './ReservationTable';
 import CheckinTable from './CheckinTable';
 import CheckoutTable from './CheckoutTable';
 
 const Bookings = () => {
+  const location = useLocation();
+
+  // Determine the active tab based on the current route
+  const getActiveStyle = (path) => ({
+    backgroundColor: location.pathname.includes(path) ? '#1890ff' : 'white',
+    color: location.pathname.includes(path) ? 'white' : 'black',
+  });
+
   return (
     <div>
       <nav>
         <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'row' }}>
           <li style={{ marginRight: '8px' }}>
-            <Button type="primary">
-              <Link to="reservations">Reservations</Link>
+            <Button
+              type="primary"
+              icon={<BookOutlined />}
+              style={getActiveStyle('reservations')}
+            >
+              <Link to="reservations" style={{ color: 'inherit' }}>Reservations</Link>
             </Button>
           </li>
           <li style={{ marginRight: '8px' }}>
-            <Button type="primary">
-              <Link to="checkins">Check-ins</Link>
+            <Button
+              type="primary"
+              icon={<CheckCircleOutlined />}
+              style={getActiveStyle('checkins')}
+            >
+              <Link to="checkins" style={{ color: 'inherit' }}>Check-ins</Link>
             </Button>
           </li>
           <li>
-            <Button type="primary">
-              <Link to="checkouts">Check-outs</Link>
+            <Button
+              type="primary"
+              icon={<CheckSquareOutlined />}
+              style={getActiveStyle('checkouts')}
+            >
+              <Link to="checkouts" style={{ color: 'inherit' }}>Check-outs</Link>
             </Button>
           </li>
         </ul>

@@ -32,7 +32,6 @@ function ParkingData() {
             <p>Register Plate No: {deposit.RegisterPlateNo || 'N/A'}</p>
             <p>Type: {deposit.Type_name}</p>
             <p>Parking ID: {deposit.Parking_ID}</p>
-            <p>Return DateTime: {dayjs(deposit.ReturnDateTime).format('DD/MM/YYYY HH:mm')}</p>
             <p>Officer Name: {deposit.Officer_Fname} {deposit.Officer_Lname}</p>
             <p>Deposit Status: {deposit.DepositStatus_name}</p>
             <p>Check-in DateTime: {dayjs(deposit.CheckinDateTime).format('DD/MM/YYYY HH:mm')}</p>

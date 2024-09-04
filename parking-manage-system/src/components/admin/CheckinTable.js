@@ -11,26 +11,24 @@ function CheckinTable() {
   const [receiptModalVisible, setReceiptModalVisible] = useState(false);
   const { user: currentUser } = useAuth();
 
-  useEffect(() => {
-    const fetchCheckins = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/deposits'); 
-        const filteredCheckins = response.data.filter(checkin => checkin.DepositStatus_ID === 2);
-        setCheckins(filteredCheckins);
-      } catch (error) {
-        console.error('Error fetching check-ins:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchCheckins = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/deposits'); 
+      const filteredCheckins = response.data.filter(checkin => checkin.DepositStatus_ID === 2);
+      setCheckins(filteredCheckins);
+    } catch (error) {
+      console.error('Error fetching check-ins:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchCheckins();
   }, []);
 
   const handleCheckout = async (id) => {
     try {
-      
-
       // Update Deposit Status
       await axios.put(`http://localhost:5000/api/deposits/${id}`, {
         Checkout_DateTime: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
@@ -48,12 +46,12 @@ function CheckinTable() {
 
       // Calculate parking time in hours
       const parkingTime = dayjs(deposit.Checkout_DateTime).diff(dayjs(deposit.Checkin_DateTime), "hour");
-console.log("Parking Time:", parkingTime);
+      console.log("Parking Time:", parkingTime);
+      
       // Calculate fee based on Type_ID
       let parkingFee = 0;
       const fullDays = Math.floor(parkingTime / 24);
       const remainingHours = parkingTime % 24;
-
 
       if (deposit.Type_ID === '1') {
         parkingFee = fullDays * type.Price_Day + (remainingHours <= 10 ? remainingHours * type.Price_Hour : type.Price_Day);
@@ -72,7 +70,7 @@ console.log("Parking Time:", parkingTime);
 
       setReceiptData({
         ...receipt,
-        Deposit_ID:deposit.Deposit_ID,
+        Deposit_ID: deposit.Deposit_ID,
         Customer: `${deposit.Customer_Fname} ${deposit.Customer_Lname}`,
         RegisterPlateNo: deposit.RegisterPlateNo,
         Checkin_DateTime: deposit.Checkin_DateTime,
@@ -82,6 +80,10 @@ console.log("Parking Time:", parkingTime);
         Parking_Time: `${parkingTime} hours`,
         Parking_Fee: parkingFee,
       });
+
+      // Re-fetch the check-ins to update the table
+      await fetchCheckins();
+
       setReceiptModalVisible(true);
 
       message.success("Check-out successful!");
@@ -130,7 +132,6 @@ console.log("Parking Time:", parkingTime);
 
   return (
     <div>
-      <h1>หน้า Check-in</h1>
       {loading ? (
         <Spin tip="กำลังโหลด..." />
       ) : (
@@ -145,15 +146,15 @@ console.log("Parking Time:", parkingTime);
       >
         {receiptData && (
           <div>
-             <p><strong>Deposit ID:</strong>{receiptData.Deposit_ID}</p>
-        <p><strong>Customer:</strong> {receiptData.Customer}</p>
-        <p><strong>Register Plate No:</strong> {receiptData.RegisterPlateNo}</p>
-        <p><strong>Check-in Time:</strong> {dayjs(receiptData.Checkin_DateTime).format('DD/MM/YYYY HH:mm')}</p>
-        <p><strong>Checkout Time:</strong> {dayjs(receiptData.Checkout_DateTime).format('DD/MM/YYYY HH:mm')}</p>
-        <p><strong>Type:</strong> {receiptData.Type_Name}</p>
-        <p><strong>Parking ID:</strong> {receiptData.Parking_ID}</p>
-        <p><strong>Parking Time:</strong> {receiptData.Parking_Time}</p>
-        <p><strong>Parking Fee:</strong> {receiptData.Parking_Fee} THB</p>
+            <p><strong>Deposit ID:</strong> {receiptData.Deposit_ID}</p>
+            <p><strong>Customer:</strong> {receiptData.Customer}</p>
+            <p><strong>Register Plate No:</strong> {receiptData.RegisterPlateNo}</p>
+            <p><strong>Check-in Time:</strong> {dayjs(receiptData.Checkin_DateTime).format('DD/MM/YYYY HH:mm')}</p>
+            <p><strong>Checkout Time:</strong> {dayjs(receiptData.Checkout_DateTime).format('DD/MM/YYYY HH:mm')}</p>
+            <p><strong>Type:</strong> {receiptData.Type_Name}</p>
+            <p><strong>Parking ID:</strong> {receiptData.Parking_ID}</p>
+            <p><strong>Parking Time:</strong> {receiptData.Parking_Time}</p>
+            <p><strong>Parking Fee:</strong> {receiptData.Parking_Fee} THB</p>
           </div>
         )}
       </Modal>

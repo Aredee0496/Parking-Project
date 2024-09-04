@@ -16,13 +16,35 @@ const Receipt = {
   },
 
   getById: (id, callback) => {
-    db.query('SELECT * FROM receipt WHERE Receipt_ID = ?', [id], (err, results) => {
-      if (err) {
-        return callback(err, null);
-      }
+    const query = `
+      SELECT 
+        r.*, 
+        c.Customer_Fname, 
+        c.Customer_Lname,
+        car.RegisterPlateNo, 
+        t.Type_name,
+        p.Parking_ID
+      FROM 
+        receipt r
+      JOIN 
+        deposit d ON r.Deposit_ID = d.Deposit_ID
+      JOIN 
+        customer c ON d.Customer_ID = c.Customer_ID
+      JOIN
+        car car ON d.Car_ID = car.Car_ID
+      JOIN 
+        type t ON d.Type_ID = t.Type_ID
+      LEFT JOIN
+        parking p ON d.Parking_ID = p.Parking_ID
+      WHERE 
+        r.Deposit_ID = ?;
+    `;
+  
+    db.query(query, [id], (err, results) => {
+      if (err) return callback(err, null);
       callback(null, results[0]);
     });
-  },
+  },  
   
   create: (data, callback) => {
     // สร้าง ID แบบสุ่ม

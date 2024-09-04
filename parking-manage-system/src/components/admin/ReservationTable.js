@@ -121,7 +121,6 @@ function ReservationTable() {
 
   return (
     <div>
-      <h1>ตารางจอง</h1>
       {loading ? (
         <Spin tip="กำลังโหลด..." />
       ) : (
