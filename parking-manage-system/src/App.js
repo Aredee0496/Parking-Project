@@ -7,13 +7,13 @@ import Home from "./components/admin/Home";
 import Bookings from "./components/admin/Bookings";
 import Parking from "./components/admin/Parking";
 import Shuttle from "./components/admin/Shuttle";
-import Reports from "./components/admin/Reports";
 import Booking from "./components/customer/Booking";
 import ParkingData from "./components/customer/ParkingData";
 import RequestShuttle from "./components/customer/RequestShuttle";
 import Settings from "./components/customer/Settings";
 import EditProfile from "./components/customer/EditProfile";
 import ParkingHistory from "./components/customer/ParkingHistory";
+import Revenue from "./components/admin/Reports/Revenue";
 import ParkingList from "./components/admin/DataManagement/ParkingList";
 import EmployeeData from "./components/admin/DataManagement/EmployeeData";
 import CustomerData from "./components/admin/DataManagement/CustomerData";
@@ -59,7 +59,7 @@ function MainApp() {
               <Route path="/bookings/*" element={<Bookings />} />
               <Route path="/parking" element={<Parking />} />
               <Route path="/shuttle" element={<Shuttle />} />
-              <Route path="/reports" element={<Reports />} />
+              <Route path="/reports/revenue" element={<Revenue />} />
               <Route path="/data-management/parkinglist" element={<ParkingList />} />
               <Route path="/data-management/employee" element={<EmployeeData />} />
               <Route path="/data-management/customer" element={<CustomerData />} />

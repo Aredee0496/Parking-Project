@@ -62,6 +62,7 @@ function CheckinTable() {
       // Create Receipt
       const receiptResponse = await axios.post("http://localhost:5000/api/receipts", {
         Deposit_ID: id,
+        Receipt_DateTime:dayjs().format('YYYY-MM-DDTHH:mm:ss'),
         Parking_Time: `${parkingTime} hours`, 
         Parking_Fee: parkingFee,
       });
