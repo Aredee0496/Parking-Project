@@ -13,6 +13,7 @@
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.4",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "crypto": "^1.0.1",
     "dayjs": "^1.11.13",
     "jsonwebtoken": "^9.0.2",

@@ -188,7 +188,7 @@ function ParkingList() {
         </Panel>
       </Collapse>
 
-      <Table dataSource={parkings} columns={columns} rowKey="Parking_ID" pagination={false} />
+      <Table dataSource={parkings} columns={columns} rowKey="Parking_ID" pagination={{ pageSize: 10 }} />
     </div>
   );
 }

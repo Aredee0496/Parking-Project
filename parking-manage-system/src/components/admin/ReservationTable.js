@@ -17,7 +17,23 @@ function ReservationTable() {
     const fetchReservations = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/deposits');
-        const filteredReservations = response.data.filter(reservation => reservation.DepositStatus_ID === 1);
+        const currentTime = dayjs();
+
+        const filteredReservations = response.data.filter(reservation => {
+          // Check if the reservation is active
+          if (reservation.DepositStatus_ID === 1) {
+            const bookingTime = dayjs(reservation.Booking_DateTime);
+            // If the difference is greater than 15 minutes, cancel the reservation
+            if (currentTime.diff(bookingTime, 'minute') > 15) {
+              // Cancel the reservation
+              cancelReservation(reservation.Deposit_ID);
+              return false; // Exclude from the displayed reservations
+            }
+            return true; // Include in the displayed reservations
+          }
+          return false; // Exclude non-active reservations
+        });
+
         setReservations(filteredReservations);
       } catch (error) {
         console.error('Error fetching reservations:', error);
@@ -38,6 +54,16 @@ function ReservationTable() {
     fetchReservations();
     fetchCars();
   }, []);
+
+  const cancelReservation = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/deposits/${id}`);
+      message.success(`Reservation ${id} has been canceled due to exceeding the time limit.`);
+    } catch (error) {
+      console.error('Error canceling reservation:', error);
+      message.error('Failed to cancel the reservation.');
+    }
+  };
 
   const handleCheckIn = async (id) => {
     const carId = selectedCarIds[id]; 
