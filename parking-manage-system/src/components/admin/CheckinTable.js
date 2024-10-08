@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from "../../context/AuthContext";
-import { Table, Spin, Button, message, Modal } from 'antd';
+import { Table, Spin, Button, message, Modal, Input } from 'antd';
 import axios from 'axios';
 import dayjs from 'dayjs';
 
@@ -9,6 +9,7 @@ function CheckinTable() {
   const [loading, setLoading] = useState(true);
   const [receiptData, setReceiptData] = useState(null);
   const [receiptModalVisible, setReceiptModalVisible] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const { user: currentUser } = useAuth();
 
   const fetchCheckins = async () => {
@@ -62,7 +63,7 @@ function CheckinTable() {
       // Create Receipt
       const receiptResponse = await axios.post("http://localhost:5000/api/receipts", {
         Deposit_ID: id,
-        Receipt_DateTime:dayjs().format('YYYY-MM-DDTHH:mm:ss'),
+        Receipt_DateTime: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
         Parking_Time: `${parkingTime}`, 
         Parking_Fee: parkingFee,
       });
@@ -84,7 +85,6 @@ function CheckinTable() {
 
       await axios.delete(`http://localhost:5000/api/callshuttles/${id}`);
 
-      // Re-fetch the check-ins to update the table
       await fetchCheckins();
 
       setReceiptModalVisible(true);
@@ -95,6 +95,11 @@ function CheckinTable() {
       message.error("Check-out failed. Please try again.");
     }
   };
+
+  const filteredCheckins = checkins.filter(checkin => {
+    const fullName = `${checkin.Customer_Fname} ${checkin.Customer_Lname}`;
+    return fullName.toLowerCase().includes(searchValue.toLowerCase());
+  });
 
   const columns = [
     {
@@ -135,10 +140,16 @@ function CheckinTable() {
 
   return (
     <div>
+      <Input
+        placeholder="ค้นหาข้อมูลลูกค้า"
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
+        style={{ marginBottom: 8, width: 300, float: 'right' }} // Adjusted styles to place the search input on the right
+      />
       {loading ? (
         <Spin tip="กำลังโหลด..." />
       ) : (
-        <Table dataSource={checkins} columns={columns} rowKey="Deposit_ID" />
+        <Table dataSource={filteredCheckins} columns={columns} rowKey="Deposit_ID" />
       )}
 
       <Modal

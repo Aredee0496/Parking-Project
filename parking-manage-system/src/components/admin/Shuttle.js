@@ -109,7 +109,7 @@ const CallshuttleData = () => {
         <Select 
           placeholder="เลือก Shuttle ID" 
           style={{ width: 120, marginRight: 8 }}
-          onChange={(value) => handleConfirm(record.CallShuttle_ID, value)} // Trigger update directly
+          onChange={(value) => handleConfirm(record.CallShuttle_ID, value)} 
         >
           {shuttleOptions.map(shuttle => (
             <Option key={shuttle.Shuttle_ID} value={shuttle.Shuttle_ID}>
@@ -161,14 +161,13 @@ const CallshuttleData = () => {
 
   return (
     <div className="table-container">
-      <h2>รายการเรียกรับส่ง</h2>
       <Table
         columns={columns}
         dataSource={filteredCallshuttles}
         rowKey="CallShuttle_ID"
       />
 
-      <h2>รายการที่สำเร็จแล้ว</h2>
+      <h3>รายการที่สำเร็จแล้ว</h3>
       <Table
         columns={confirmedColumns}
         dataSource={confirmedShuttles}

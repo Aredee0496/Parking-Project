@@ -18,7 +18,7 @@ const Bookings = () => {
   return (
     <div>
       <nav>
-        <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'row' }}>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 8, display: 'flex', flexDirection: 'row', alignItems: 'flex-start' }}>
           <li style={{ marginRight: '8px' }}>
             <Button
               type="primary"

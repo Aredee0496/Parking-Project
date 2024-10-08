@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import "./Parking.css";
 import axios from "axios";
-import { Select, Card, Modal, AutoComplete, Input, Button, notification ,DatePicker} from "antd";
+import { Select, Modal, AutoComplete, Input, Button, notification ,DatePicker} from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import moment from 'moment';
 
@@ -12,7 +12,6 @@ function Parking() {
   const [parkingData, setParkingData] = useState([]);
   const { user: currentUser } = useAuth();
   const [filters, setFilters] = useState({ status: "ทั้งหมด", type: "ทั้งหมด" });
-  const [currentTime, setCurrentTime] = useState(new Date());
   const [modalState, setModalState] = useState({
     visible: false,
     parking: null,
@@ -32,11 +31,7 @@ function Parking() {
         console.error("Error fetching parking data:", error);
       }
     };
-
     fetchData();
-
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
   }, []);
 
   const getStatusClass = (status) => {
@@ -139,27 +134,6 @@ function Parking() {
 
   return (
     <div>
-      <Card
-        style={{
-          textAlign: "center",
-          backgroundColor: "#001529",
-          borderRadius: "20px",
-          width: "120px",
-          height: "80px",
-        }}
-      >
-        <div style={{ fontSize: "12px", fontWeight: "bold", color: "#fff" }}>
-          {currentTime.toLocaleDateString("th-TH")}
-          <div style={{ fontSize: "14px", fontWeight: "bold", color: "#1890ff" }}>
-          {currentTime.toLocaleTimeString("th-TH", {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false,
-          })}
-        </div>
-        </div>
-      </Card>
 
       <Modal
         title={`ฟอร์มการฝาก ${modalState.parking?.Type_name} ${modalState.parking?.Parking_ID}`}

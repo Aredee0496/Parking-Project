@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from "../../context/AuthContext";
-import { Table, Spin, Select, Button, message } from 'antd';
+import { Table, Spin, Select, Button, message, Input } from 'antd';
 import axios from 'axios';
 import dayjs from 'dayjs';
 
@@ -12,6 +12,7 @@ function ReservationTable() {
   const { user: currentUser } = useAuth();
   const [cars, setCars] = useState([]);
   const [selectedCarIds, setSelectedCarIds] = useState({});
+  const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
     const fetchReservations = async () => {
@@ -65,7 +66,7 @@ function ReservationTable() {
   };
 
   const handleCheckIn = async (id) => {
-    const carId = selectedCarIds[id]; 
+    const carId = selectedCarIds[id];
 
     if (!carId) {
       message.error('Please select a car before checking in.');
@@ -75,8 +76,8 @@ function ReservationTable() {
     try {
       await axios.put(`http://localhost:5000/api/deposits/${id}`, {
         Car_ID: carId,
-        Checkin_DateTime: dayjs().format('YYYY-MM-DDTHH:mm:ss'),  
-        Officer_ID: currentUser.id, 
+        Checkin_DateTime: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
+        Officer_ID: currentUser.id,
         DepositStatus_ID: 2,
       });
 
@@ -91,8 +92,13 @@ function ReservationTable() {
     }
   };
 
+  const filteredReservations = reservations.filter(reservation => {
+    const fullName = `${reservation.Customer_Fname} ${reservation.Customer_Lname}`;
+    return fullName.toLowerCase().includes(searchValue.toLowerCase());
+  });
+
   const columns = [
-    {  
+    {
       title: 'Deposit_ID',
       dataIndex: 'Deposit_ID',
       key: 'Deposit_ID',
@@ -108,9 +114,9 @@ function ReservationTable() {
         const customerCars = cars.filter(car => car.Customer_ID === record.Customer_ID);
 
         return (
-          <Select 
-            defaultValue="" 
-            style={{ width: 120 }} 
+          <Select
+            defaultValue=""
+            style={{ width: 120 }}
             onChange={value => setSelectedCarIds(prev => ({ ...prev, [record.Deposit_ID]: value }))}
           >
             {customerCars.map(car => (
@@ -146,10 +152,16 @@ function ReservationTable() {
 
   return (
     <div>
+      <Input
+        placeholder="ค้นหาข้อมูลลูกค้า"
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
+        style={{ marginBottom: 8, width: 300, float: 'right' }}
+      />
       {loading ? (
         <Spin tip="กำลังโหลด..." />
       ) : (
-        <Table dataSource={reservations} columns={columns} rowKey="Deposit_ID" />
+        <Table dataSource={filteredReservations} columns={columns} rowKey="Deposit_ID" />
       )}
     </div>
   );

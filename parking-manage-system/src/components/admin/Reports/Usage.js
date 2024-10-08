@@ -76,15 +76,14 @@ function Usage() {
     fetchData();
   }, []);
 
-  // Define colors for each type
   const colors = {
-    "ประเภทกลางแจ้ง": "#0088FE",
-    "ประเภทในร่ม": "#00C49F",
+    "ประเภทในร่ม": "#0088FE",
+    "ประเภทกลางแจ้ง": "#00C49F",
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <Row gutter={16}>
+    <div style={{ padding: "5px" }}>
+      <Row gutter={8}>
         <Col span={12}>
           {chartData.labels && chartData.datasets && chartData.labels.length > 0 && chartData.datasets[0].data.length > 0 ? (
             <Card title="กราฟชั่วโมงการจอด" style={{ borderRadius: '8px' }}>
@@ -116,7 +115,7 @@ function Usage() {
           )}
         </Col>
         <Col span={12}>
-          <Card title="สรุปชั่วโมงการจอด" style={{ height: "100%", borderRadius: '8px' }}>
+          <Card title="สรุปชั่วโมงการจอด" style={{ height: "40%", borderRadius: '8px' }}>
             {Object.entries(usageSummary).map(([type, hours]) => (
               <div key={type} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                 {/* Colored box */}

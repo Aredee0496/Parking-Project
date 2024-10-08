@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Spin, Button, Modal, message } from 'antd';
+import { Table, Spin, Button, Modal, message, Input } from 'antd';
 import axios from 'axios';
 import dayjs from 'dayjs';
 
@@ -8,6 +8,8 @@ function CheckoutTable() {
   const [loading, setLoading] = useState(true);
   const [receipt, setReceipt] = useState(null);
   const [receiptModalVisible, setReceiptModalVisible] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+  const [filteredCheckouts, setFilteredCheckouts] = useState([]);
 
   useEffect(() => {
     const fetchCheckouts = async () => {
@@ -17,6 +19,7 @@ function CheckoutTable() {
           .filter(checkout => checkout.DepositStatus_ID === 3)
           .sort((a, b) => new Date(b.Checkout_DateTime) - new Date(a.Checkout_DateTime)); 
         setCheckouts(filteredCheckouts);
+        setFilteredCheckouts(filteredCheckouts); // Initialize filtered data
       } catch (error) {
         console.error('Error fetching check-outs:', error);
       } finally {
@@ -26,6 +29,14 @@ function CheckoutTable() {
 
     fetchCheckouts();
   }, []);
+
+  useEffect(() => {
+    const lowerSearchText = searchValue.toLowerCase();
+    const filtered = checkouts.filter(checkout =>
+      `${checkout.Customer_Fname} ${checkout.Customer_Lname}`.toLowerCase().includes(lowerSearchText)
+    );
+    setFilteredCheckouts(filtered);
+  }, [searchValue, checkouts]);
 
   const handleViewReceipt = async (id) => {
     try {
@@ -48,7 +59,6 @@ function CheckoutTable() {
       message.error("Failed to load receipt data. Please try again.");
     }
   };
-  
 
   const columns = [
     {
@@ -89,10 +99,16 @@ function CheckoutTable() {
 
   return (
     <div>
+      <Input
+        placeholder="ค้นหาข้อมูลลูกค้า"
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
+        style={{ marginBottom: 8, width: 300, float: 'right' }}
+      />
       {loading ? (
         <Spin tip="กำลังโหลด..." />
       ) : (
-        <Table dataSource={checkouts} columns={columns} rowKey="Deposit_ID" />
+        <Table dataSource={filteredCheckouts} columns={columns} rowKey="Deposit_ID" />
       )}
 
       <Modal
