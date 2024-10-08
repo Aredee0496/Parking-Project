@@ -13,7 +13,9 @@ function CheckoutTable() {
     const fetchCheckouts = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/deposits');
-        const filteredCheckouts = response.data.filter(checkout => checkout.DepositStatus_ID === 3);
+        const filteredCheckouts = response.data
+          .filter(checkout => checkout.DepositStatus_ID === 3)
+          .sort((a, b) => new Date(b.Checkout_DateTime) - new Date(a.Checkout_DateTime)); 
         setCheckouts(filteredCheckouts);
       } catch (error) {
         console.error('Error fetching check-outs:', error);
@@ -27,16 +29,26 @@ function CheckoutTable() {
 
   const handleViewReceipt = async (id) => {
     try {
-      // Fetch the receipt data directly from the server
       const receiptResponse = await axios.get(`http://localhost:5000/api/receipts/${id}`);
-      setReceipt(receiptResponse.data);
-      console.log("re",receiptResponse.data)
+      
+      // Fetching the deposit data along with receipt data
+      const depositResponse = await axios.get(`http://localhost:5000/api/deposits/${id}`);
+      
+      // Combine deposit and receipt data
+      const receiptData = {
+        ...receiptResponse.data,
+        Checkin_DateTime: depositResponse.data.Checkin_DateTime,
+        Checkout_DateTime: depositResponse.data.Checkout_DateTime
+      };
+      
+      setReceipt(receiptData);
       setReceiptModalVisible(true);
     } catch (error) {
       console.error("Error fetching receipt data:", error.response?.data || error.message);
       message.error("Failed to load receipt data. Please try again.");
     }
   };
+  
 
   const columns = [
     {

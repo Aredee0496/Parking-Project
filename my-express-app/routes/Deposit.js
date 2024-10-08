@@ -3,6 +3,7 @@ const router = express.Router();
 const DepositController = require('../controllers/Deposit');
 
 router.get('/deposits', DepositController.getAll);
+router.get('/deposits/call', DepositController.getTocallshuttle);
 router.get('/deposits/:id', DepositController.getById);
 router.get('/checkin/:id', DepositController.getCheckin);
 router.get('/booking/:id', DepositController.getBooking);

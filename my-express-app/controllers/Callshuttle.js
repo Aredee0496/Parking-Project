@@ -10,6 +10,16 @@ const CallshuttleController = {
     });
   },
 
+  get: (req, res) => {
+    Callshuttle.get((err, callshuttles) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(callshuttles);
+    });
+  },
+
+
   getById: (req, res) => {
     const id = req.params.id;
     Callshuttle.getById(id, (err, callshuttle) => {

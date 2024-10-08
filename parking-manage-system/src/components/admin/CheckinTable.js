@@ -45,7 +45,7 @@ function CheckinTable() {
       const type = typeResponse.data;
 
       // Calculate parking time in hours
-      const parkingTime = dayjs(deposit.Checkout_DateTime).diff(dayjs(deposit.Checkin_DateTime), "hour");
+      const parkingTime = Math.max(dayjs(deposit.Checkout_DateTime).diff(dayjs(deposit.Checkin_DateTime), "hour"), 1);
       console.log("Parking Time:", parkingTime);
       
       // Calculate fee based on Type_ID
@@ -81,6 +81,8 @@ function CheckinTable() {
         Parking_Time: `${parkingTime} hours`,
         Parking_Fee: parkingFee,
       });
+
+      await axios.delete(`http://localhost:5000/api/callshuttles/${id}`);
 
       // Re-fetch the check-ins to update the table
       await fetchCheckins();

@@ -1,23 +1,70 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { Menu } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { Menu, Button, notification, Modal, Form, Input } from 'antd';
 import { useAuth } from '../../context/AuthContext';
-import { HomeOutlined, CarOutlined, ScheduleOutlined, BarChartOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import { HomeOutlined, CarOutlined, ScheduleOutlined, BarChartOutlined, UserOutlined, LogoutOutlined, EditOutlined } from '@ant-design/icons';
+import axios from 'axios';
 import './Sidebar.css';
 
 const { SubMenu } = Menu;
 
 const Sidebar = () => {
-  const { user, setUser } = useAuth(); 
+  const { user, setUser } = useAuth();
+  const [profile, setProfile] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // Form instance for profile editing
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/officers/${user.id}`);
+        setProfile(response.data);
+        // Set form values with fetched profile data
+        form.setFieldsValue({
+          Officer_Fname: response.data.Officer_Fname,
+          Officer_Lname: response.data.Officer_Lname,
+          Officer_Username: response.data.Officer_Username,
+          Officer_Tel: response.data.Officer_Tel,
+        });
+      } catch (error) {
+        notification.error({ message: 'Error fetching profile' });
+      }
+    };
+    if (user) {
+      fetchProfile();
+    }
+  }, [user, form]);
 
   const handleLogout = () => {
-    localStorage.removeItem('jwt'); 
+    localStorage.removeItem('jwt');
     setUser(null);
   };
 
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleSubmit = async (values) => {
+    try {
+      await axios.put(`http://localhost:5000/api/officers/${user.id}`, values);
+      notification.success({ message: 'Profile updated successfully' });
+      setProfile(values); // Update local profile state
+      setIsModalVisible(false);
+    } catch (error) {
+      notification.error({ message: 'Error updating profile' });
+    }
+  };
+  const location = useLocation(); 
+
   return (
     <nav className="sidebar">
-      <Menu mode="inline" theme="dark" defaultSelectedKeys={['/']} style={{ height: '100%', borderRight: 0 }}>
+      <Menu mode="inline" theme="dark" defaultSelectedKeys={[location.pathname]} style={{ height: '100%', borderRight: 0 }}>
         <Menu.Item key="/" icon={<HomeOutlined />}>
           <NavLink to="/" exact activeClassName="active">Home</NavLink>
         </Menu.Item>
@@ -61,6 +108,37 @@ const Sidebar = () => {
         <Menu.Item key="/logout" icon={<LogoutOutlined />} style={{ marginTop: 'auto' }}>
           <NavLink to="/logout" activeClassName="active" onClick={handleLogout}>Logout</NavLink>
         </Menu.Item>
+
+        {/* Profile Section */}
+        {profile && (
+          <div className="sidebar-profile" style={{ padding: '20px', color: 'white', borderTop: '1px solid rgba(255, 255, 255, 0.2)', marginTop: 'auto' }}>
+            <p>{profile.Officer_Fname} {profile.Officer_Lname}</p>
+            <Button type="link" style={{ color: 'white', padding: 0 }} onClick={showModal}>
+              <EditOutlined />
+            </Button>
+          </div>
+        )}
+
+        {/* Edit Profile Modal */}
+        <Modal title="Edit Profile" visible={isModalVisible} onCancel={handleCancel} footer={null}>
+          <Form form={form} onFinish={handleSubmit} layout="vertical">
+            <Form.Item label="First Name" name="Officer_Fname" rules={[{ required: true, message: 'Please input your first name!' }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item label="Last Name" name="Officer_Lname" rules={[{ required: true, message: 'Please input your last name!' }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item label="Username" name="Officer_Username" rules={[{ required: true, message: 'Please input your username!' }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item label="Telephone" name="Officer_Tel" rules={[{ required: true, message: 'Please input your telephone number!' }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">Submit</Button>
+            </Form.Item>
+          </Form>
+        </Modal>
       </Menu>
     </nav>
   );

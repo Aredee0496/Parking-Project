@@ -27,6 +27,36 @@ const Deposit = {
     });
   },
 
+  getTocallshuttle: (callback) => {
+    const query = `
+        SELECT
+            d.Deposit_ID,
+            d.Customer_ID,
+            c.Customer_Fname,
+            c.Customer_Lname,
+            t.Type_name
+        FROM
+            Deposit d
+        JOIN
+            Customer c
+        ON
+            d.Customer_ID = c.Customer_ID
+        JOIN
+            Type t
+        ON
+            d.Type_ID = t.Type_ID
+        WHERE
+            d.DepositStatus_ID = 2
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            return callback(err, null);
+        }
+        callback(null, results);
+    });
+},
+
   getById: (id, callback) => {
     const query = `
       SELECT 
@@ -197,6 +227,11 @@ getBooking: (id, callback) => {
           return callback(err, null);
         }
 
+        // ตรวจสอบว่ามีผลลัพธ์หรือไม่
+        if (!results || results.length === 0) {
+          return callback(new Error("No deposit found with the given ID"), null);
+        }
+
         const parkingId = results[0].Parking_ID;
 
         db.query(
@@ -207,6 +242,7 @@ getBooking: (id, callback) => {
               return callback(deleteErr, null);
             }
 
+            // หลังจากลบแล้ว ทำการอัปเดตสถานะที่จอดรถ
             db.query(
               "UPDATE parking SET PStatus_ID = ? WHERE Parking_ID = ?",
               ["1", parkingId],
@@ -223,6 +259,7 @@ getBooking: (id, callback) => {
       }
     );
   },
+
 
   checkAvailability: (typeId, callback) => {
     const selectQuery = `

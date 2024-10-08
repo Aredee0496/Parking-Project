@@ -141,7 +141,6 @@ function ParkingList() {
 
   return (
     <div>
-      <h1>ข้อมูลที่จอดรถ</h1>
       {error && <p>{error}</p>}
 
       <Collapse>

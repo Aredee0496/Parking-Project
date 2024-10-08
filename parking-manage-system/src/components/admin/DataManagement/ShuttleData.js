@@ -123,7 +123,6 @@ const ShuttleData = () => {
 
   return (
     <div className="table-container">
-      <h1>Shuttle List</h1>
       <Button type="primary" onClick={() => setShowAddModal(true)} style={{ marginBottom: 16 }}>
         Add Shuttle
       </Button>

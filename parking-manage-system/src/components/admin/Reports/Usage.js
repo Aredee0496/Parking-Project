@@ -78,8 +78,8 @@ function Usage() {
 
   // Define colors for each type
   const colors = {
-    "ประเภทในร่ม": "#0088FE",
-    "ประเภทกลางแจ้ง": "#00C49F",
+    "ประเภทกลางแจ้ง": "#0088FE",
+    "ประเภทในร่ม": "#00C49F",
   };
 
   return (

@@ -61,7 +61,6 @@ function ReservationTable() {
       message.success(`Reservation ${id} has been canceled due to exceeding the time limit.`);
     } catch (error) {
       console.error('Error canceling reservation:', error);
-      message.error('Failed to cancel the reservation.');
     }
   };
 

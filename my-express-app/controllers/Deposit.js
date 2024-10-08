@@ -10,6 +10,15 @@ const DepositController = {
     });
   },
 
+  getTocallshuttle: (req, res) => {
+    Deposit.getTocallshuttle((err, deposits) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(deposits);
+    });
+  },
+  
   getById: (req, res) => {
     const id = req.params.id;
     Deposit.getById(id, (err, deposit) => {
