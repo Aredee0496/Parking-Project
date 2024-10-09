@@ -14,7 +14,7 @@ const reservationstatusRoutes = require('./routes/Reservationstatus');
 const depositRoutes = require('./routes/Deposit');
 const shuttleRoutes = require('./routes/Shuttle');
 const callshuttleRoutes = require('./routes/Callshuttle');
-const callshuttlestatusRoutes = require('./routes/Callshuttlestatus');
+const timesettingRoutes = require('./routes/Timesetting');
 const receiptRoutes = require('./routes/Receipt');
 
 const app = express();
@@ -37,7 +37,7 @@ app.use('/api', reservationstatusRoutes);
 app.use('/api', depositRoutes);
 app.use('/api', shuttleRoutes);
 app.use('/api', callshuttleRoutes);
-app.use('/api', callshuttlestatusRoutes);
+app.use('/api', timesettingRoutes);
 app.use('/api', receiptRoutes);
 
 

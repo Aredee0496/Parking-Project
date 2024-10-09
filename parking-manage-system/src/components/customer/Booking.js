@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import dayjs from 'dayjs';
 import { Form, DatePicker, Button, message, Card } from 'antd';
 import { BiSolidCarGarage, BiSolidCar } from "react-icons/bi";
+import duration from 'dayjs/plugin/duration';
+
+dayjs.extend(duration);
 
 function Booking() {
   const { user } = useAuth();
@@ -12,19 +15,71 @@ function Booking() {
   const [parkingType, setParkingType] = useState("");
   const [bookingDateTime, setBookingDateTime] = useState(null);
   const [deposits, setDeposits] = useState([]);
+  const [maxAdvanceHours, setMaxAdvanceHours] = useState(0);
+  const [parkingTypes, setParkingTypes] = useState([]); // New state for parking types
+
+  useEffect(() => {
+    const fetchTimeSettings = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/timesetting');
+        setMaxAdvanceHours(response.data[0].time);
+      } catch (error) {
+        console.error("Error fetching time settings:", error);
+      }
+    };
+
+    fetchTimeSettings();
+  }, []);
+
+  useEffect(() => {
+    const fetchParkingTypes = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/types');
+        setParkingTypes(response.data);
+      } catch (error) {
+        console.error("Error fetching parking types:", error);
+        message.error("ไม่สามารถดึงข้อมูลประเภทที่จอดได้");
+      }
+    };
+
+    fetchParkingTypes();
+  }, []);
+
+  const handleCancel = useCallback(async () => {
+    try {
+      await axios.delete(`http://localhost:5000/api/deposits/${deposits.Deposit_ID}`);
+      message.success("ยกเลิกการจองสำเร็จ");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error canceling booking:", error);
+      message.error("ไม่สามารถยกเลิกการจองได้");
+    }
+  }, [deposits.Deposit_ID]); 
 
   useEffect(() => {
     axios.get(`http://localhost:5000/api/booking/${user.id}`)
       .then(response => {
         setDeposits(response.data);
+        const bookingTime = dayjs(response.data.Booking_DateTime);
+        const currentTime = dayjs();
+        const diffMinutes = currentTime.diff(bookingTime, 'minute');
+
+        if (diffMinutes > 15 && response.data.DepositStatus_ID === 1) {
+          handleCancel(); 
+        }
       })
       .catch(err => {
         console.error("Error fetching deposits:", err);
         message.error("ไม่สามารถดึงข้อมูลการจองได้");
       });
-  }, [user, navigate]);
+  }, [user, navigate, handleCancel]);
 
   const checkAvailability = async () => {
+    if (!bookingDateTime || !parkingType) {
+      message.error("กรุณาเลือกวันที่และประเภทที่จอดรถ");
+      return { available: false };
+    }
+
     const availabilityData = {
       Type_ID: parkingType,
       Booking_DateTime: bookingDateTime,
@@ -38,7 +93,7 @@ function Booking() {
       return { available: false };
     }
   };
- 
+
   const handleSubmit = async (values) => {
     const { available, Parking_ID } = await checkAvailability();
 
@@ -67,63 +122,86 @@ function Booking() {
     }
   };
 
-  const handleCancel = async () => {
-    try {
-      await axios.delete(`http://localhost:5000/api/deposits/${deposits.Deposit_ID}`);
-      message.success("ยกเลิกการจองสำเร็จ");
-      window.location.reload();
-    } catch (error) {
-      console.error("Error canceling booking:", error);
-      message.error("ไม่สามารถยกเลิกการจองได้");
+  const disabledDate = (current) => {
+    const maxDate = dayjs().add(maxAdvanceHours, 'hour'); 
+    return current && (current < dayjs().startOf('day') || current > maxDate);
+  };  
+  
+  const handleDateChange = (date, dateString) => {
+    if (date) {
+      const currentTime = dayjs();
+
+      if (date.isBefore(currentTime, 'minute')) {
+        message.error("ไม่สามารถเลือกเวลาย้อนหลังได้");
+        setBookingDateTime(null); 
+      } else {
+        setBookingDateTime(dateString);
+      }
+    } else {
+      setBookingDateTime(null);
     }
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>หน้าการจองลูกค้า</h1>
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "20px", }}>
+      <div style={{  maxWidth: "600px", margin: "0 auto" }}>
 
-      {deposits ? (
-        <Card title="ข้อมูลการจองปัจจุบัน" style={{ marginBottom: "20px" }}>
-          <p><strong>ประเภทที่จอด:</strong> {deposits.Type_name}</p>
-          <p><strong>วันที่และเวลาที่จอง:</strong> {dayjs(deposits.Booking_DateTime).format('YYYY-MM-DD HH:mm')}</p>
-          <p><strong>Parking ID:</strong> {deposits.Parking_ID}</p>
-          <p><strong>สถานะ:</strong> {deposits.DepositStatus_name}</p>
-          <Button danger onClick={handleCancel}>ยกเลิกการจอง</Button>
-        </Card>
-      ) : (
-        <Form onFinish={handleSubmit} layout="vertical">
-          <Form.Item label="ประเภทที่จอด" required>
-            <Button
-              type={parkingType === "1" ? "primary" : "default"}
-              onClick={() => setParkingType("1")}
-              style={{ marginRight: "10px" }}
-            >
-              <BiSolidCarGarage size={30} />
-              ในร่ม
-            </Button>
-            <Button
-              type={parkingType === "2" ? "primary" : "default"}
-              onClick={() => setParkingType("2")}
-            >
-              <BiSolidCar size={30} />
-              กลางแจ้ง
-            </Button>
-          </Form.Item>
+        {deposits ? (
+          <Card title="ข้อมูลการจองปัจจุบัน" style={{ marginBottom: "20px", borderRadius: "8px", boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" }}>
+            <p><strong>ประเภทที่จอด:</strong> {deposits.Type_name}</p>
+            <p><strong>วันที่และเวลาที่จอง:</strong> {dayjs(deposits.Booking_DateTime).format('YYYY-MM-DD HH:mm')}</p>
+            <p><strong>เลขที่จอด:</strong> {deposits.Parking_ID}</p>
+            <p><strong>สถานะ:</strong> {deposits.DepositStatus_name}</p>
+            <Button danger onClick={handleCancel} style={{ width: '100%' }}>ยกเลิกการจอง</Button>
+          </Card>
+        ) : (<Card>
+          <Form onFinish={handleSubmit} layout="vertical">
+                        <div style={{ marginTop: "20px", textAlign: "center" }}>
+              <h3>ราคาที่จอดรถ:</h3>
+              {parkingTypes.map((type) => (
+                <p key={type.Type_ID}>
+                  <strong>{type.Type_name}:</strong> ชั่วโมงละ: {type.Price_Hour} บาท 
+                  เกิน 5 ชั่วโมง คิดเป็นวันละ: {type.Price_Day} บาท
+                </p>
+              ))}
+            </div>
+            <Form.Item label="ประเภทที่จอด" required>
+              <Button
+                type={parkingType === "1" ? "primary" : "default"}
+                onClick={() => setParkingType("1")}
+                style={{ marginRight: "10px", width: "48%" }}
+              >
+                <BiSolidCarGarage size={30} />
+                ในร่ม
+              </Button>
+              <Button
+                type={parkingType === "2" ? "primary" : "default"}
+                onClick={() => setParkingType("2")}
+                style={{ width: "48%" }}
+              >
+                <BiSolidCar size={30} />
+                กลางแจ้ง
+              </Button>
+            </Form.Item>
 
-          <Form.Item label="วันที่และเวลาที่จอง" name="bookingDateTime" rules={[{ required: true, message: 'กรุณาเลือกวันที่และเวลา' }]}>
-            <DatePicker
-              showTime
-              format="YYYY-MM-DD HH:mm"
-              onChange={(date, dateString) => setBookingDateTime(dateString)}
-              placeholder="เลือกวันที่และเวลา"
-            />
-          </Form.Item>
+            <Form.Item label="เลือกวันที่และเวลา" required>
+              <DatePicker
+                showTime
+                format="YYYY-MM-DD HH:mm"
+                disabledDate={disabledDate}
+                onChange={handleDateChange}
+                style={{ width: '100%' }}
+              />
+            </Form.Item>
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit">ยืนยันการจอง</Button>
-          </Form.Item>
-        </Form>
-      )}
+            <Form.Item>
+              <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+                จอง
+              </Button>
+            </Form.Item>
+          </Form>
+        </Card>)}
+      </div>
     </div>
   );
 }

@@ -2,9 +2,13 @@
 
 body {
   background-color: #ececec;
-  margin: 0; /* Remove default margin */
-  font-family: "kanit", sans-serif; /* Set a default font */
+  background-image: url('../public/bg.png'); /* ใช้ url() สำหรับการกำหนดรูปภาพ */
+  background-size: cover; /* ไม่มี ' ' */
+  background-position: center; /* ไม่มี ' ' */
+  margin: 0; /* ปิด comment */
+  font-family: "kanit", sans-serif; /* ตั้งค่าฟอนต์เริ่มต้น */
 }
+
 
 .app {
   display: flex;

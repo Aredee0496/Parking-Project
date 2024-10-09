@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Card, Col, Row, Statistic, Table } from "antd";
+import { Card, Col, Row, Statistic, Table, Button, Modal, Select } from "antd";
 import { BellOutlined, BellFilled } from "@ant-design/icons";
 import { Pie } from "react-chartjs-2";
 import { Chart, ArcElement, Tooltip, Legend } from "chart.js";
@@ -12,6 +12,7 @@ Chart.register(ArcElement, Tooltip, Legend);
 
 function Home() {
   const { user } = useAuth();
+  const { Option } = Select;
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [parkingData, setParkingData] = useState({
@@ -31,6 +32,8 @@ function Home() {
 
   const [reservations, setReservations] = useState([]);
   const [shuttleCalls, setShuttleCalls] = useState([]);
+  const [timeSetting, setTimeSetting] = useState(0);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -39,15 +42,34 @@ function Home() {
       fetchParkingData();
       fetchReservations();
       fetchShuttleCalls();
+      fetchTimeSetting();
     }
 
-    
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
 
     return () => clearInterval(timer);
   }, [user, navigate]);
+
+  const fetchTimeSetting = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/timesetting");
+      setTimeSetting(response.data[0]?.time || 0);
+    } catch (error) {
+      console.error("Error fetching time setting:", error);
+    }
+  };
+
+  const updateTimeSetting = async () => {
+    try {
+      await axios.put("http://localhost:5000/api/timesetting/1", { time: timeSetting });
+      setIsModalVisible(false);
+      fetchTimeSetting();
+    } catch (error) {
+      console.error("Error updating time setting:", error);
+    }
+  };
 
   const hasReservations = reservations.length > 0;
   const hasShuttleCalls = shuttleCalls.length > 0;
@@ -213,27 +235,38 @@ function Home() {
   return (
     <div style={{ padding: "0px" }}>
       <div
-        style={{
-          width: "100%",
-          backgroundColor: "#001529",
-          padding: "1px",
-          textAlign: "center",
-          color: "#fff",
-          fontSize: "18px",
-          position: "sticky",
-          borderRadius: "8px",
-        }}
-      >
-        {currentTime.toLocaleDateString("th-TH")} -{" "}
-        {currentTime.toLocaleTimeString("th-TH", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: false,
-        })}
-      </div>
+  style={{
+    width: "100%",
+    backgroundColor: "#001529",
+    padding: "1px",
+    color: "#fff",
+    fontSize: "18px",
+    position: "sticky",
+    borderRadius: "8px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  }}
+>
+  <div style={{ flexGrow: 1, textAlign: "center" }}>
+    {currentTime.toLocaleDateString("th-TH")} -{" "}
+    {currentTime.toLocaleTimeString("th-TH", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    })}
+  </div>
+  <Button
+    type="primary"
+    size="small"
+    style={{ marginLeft: "auto",marginRight: "2px" }}
+    onClick={() => setIsModalVisible(true)}
+  >
+    กำหนดเวลาจองล่วงหน้า
+  </Button>
+</div>
 
-      {/* Parking Statistics */}
       <Row gutter={[8, 8]} style={{ marginTop: "20px" }}>
         <Col span={4}>
           <Card size="small">
@@ -291,7 +324,7 @@ function Home() {
             }
           >
             <Table
-              dataSource={reservations.slice(0, 2)} // แสดงแค่ 2 รายการ
+              dataSource={reservations.slice(0, 2)}
               columns={columns}
               pagination={false}
             />
@@ -320,7 +353,7 @@ function Home() {
             }
           >
             <Table
-              dataSource={shuttleCalls.slice(0, 2)} // แสดงแค่ 2 รายการ
+              dataSource={shuttleCalls.slice(0, 2)}
               columns={shuttleColumns}
               pagination={false}
             />
@@ -340,6 +373,25 @@ function Home() {
           </Card>
         </Col>
       </Row>
+
+      <Modal
+      title="ตั้งค่าเวลาจองล่วงหน้า"
+      visible={isModalVisible}
+      onOk={updateTimeSetting}
+      onCancel={() => setIsModalVisible(false)}
+    >
+      <Select
+        value={timeSetting} 
+        onChange={(value) => setTimeSetting(value)} 
+        style={{ width: '100%' }} 
+      >
+        {[...Array(25).keys()].map((hour) => (
+          <Option key={hour} value={hour}>
+            {hour} ชั่วโมง
+          </Option>
+        ))}
+      </Select>
+    </Modal>
     </div>
   );
 }

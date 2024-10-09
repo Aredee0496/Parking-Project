@@ -127,8 +127,8 @@ function CheckoutTable() {
             <p><strong>Checkout Time:</strong> {dayjs(receipt.Checkout_DateTime).format('DD/MM/YYYY HH:mm')}</p>
             <p><strong>Type:</strong> {receipt.Type_name}</p>
             <p><strong>Parking ID:</strong> {receipt.Parking_ID}</p>
-            <p><strong>Parking Time:</strong> {receipt.Parking_Time}</p>
-            <p><strong>Parking Fee:</strong> {receipt.Parking_Fee} THB</p>
+            <p><strong>Parking Time:</strong> {receipt.Parking_Time}  ชั่วโมง</p>
+            <p><strong>Parking Fee:</strong> {receipt.Parking_Fee} บาท</p>
           </div>
         )}
       </Modal>

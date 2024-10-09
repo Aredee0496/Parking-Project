@@ -30,7 +30,6 @@ function CheckinTable() {
 
   const handleCheckout = async (id) => {
     try {
-      // Update Deposit Status
       await axios.put(`http://localhost:5000/api/deposits/${id}`, {
         Checkout_DateTime: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
         Officer_ID: currentUser.id,
@@ -64,7 +63,7 @@ function CheckinTable() {
       const receiptResponse = await axios.post("http://localhost:5000/api/receipts", {
         Deposit_ID: id,
         Receipt_DateTime: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
-        Parking_Time: `${parkingTime}`, 
+        Parking_Time: parkingTime, 
         Parking_Fee: parkingFee,
       });
 
@@ -79,7 +78,7 @@ function CheckinTable() {
         Checkout_DateTime: deposit.Checkout_DateTime,
         Type_Name: type.Type_name,
         Parking_ID: deposit.Parking_ID,
-        Parking_Time: `${parkingTime} hours`,
+        Parking_Time: parkingTime,
         Parking_Fee: parkingFee,
       });
 
@@ -144,7 +143,7 @@ function CheckinTable() {
         placeholder="ค้นหาข้อมูลลูกค้า"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
-        style={{ marginBottom: 8, width: 300, float: 'right' }} // Adjusted styles to place the search input on the right
+        style={{ marginBottom: 8, width: 300, float: 'right' }} 
       />
       {loading ? (
         <Spin tip="กำลังโหลด..." />
@@ -167,7 +166,7 @@ function CheckinTable() {
             <p><strong>Checkout Time:</strong> {dayjs(receiptData.Checkout_DateTime).format('DD/MM/YYYY HH:mm')}</p>
             <p><strong>Type:</strong> {receiptData.Type_Name}</p>
             <p><strong>Parking ID:</strong> {receiptData.Parking_ID}</p>
-            <p><strong>Parking Time:</strong> {receiptData.Parking_Time}</p>
+            <p><strong>Parking Time:</strong> {receiptData.Parking_Time} ชั่วโมง</p>
             <p><strong>Parking Fee:</strong> {receiptData.Parking_Fee} THB</p>
           </div>
         )}
