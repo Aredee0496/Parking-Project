@@ -19,7 +19,7 @@ function CheckoutTable() {
           .filter(checkout => checkout.DepositStatus_ID === 3)
           .sort((a, b) => new Date(b.Checkout_DateTime) - new Date(a.Checkout_DateTime)); 
         setCheckouts(filteredCheckouts);
-        setFilteredCheckouts(filteredCheckouts); // Initialize filtered data
+        setFilteredCheckouts(filteredCheckouts);
       } catch (error) {
         console.error('Error fetching check-outs:', error);
       } finally {
@@ -41,11 +41,9 @@ function CheckoutTable() {
   const handleViewReceipt = async (id) => {
     try {
       const receiptResponse = await axios.get(`http://localhost:5000/api/receipts/${id}`);
-      
-      // Fetching the deposit data along with receipt data
+
       const depositResponse = await axios.get(`http://localhost:5000/api/deposits/${id}`);
       
-      // Combine deposit and receipt data
       const receiptData = {
         ...receiptResponse.data,
         Checkin_DateTime: depositResponse.data.Checkin_DateTime,
@@ -62,7 +60,7 @@ function CheckoutTable() {
 
   const columns = [
     {
-      title: 'Deposit_ID',
+      title: 'เลขที่การฝาก',
       dataIndex: 'Deposit_ID',
       key: 'Deposit_ID',
     },
@@ -72,25 +70,25 @@ function CheckoutTable() {
       key: 'customer',
     },
     {
-      title: 'Checkin_DateTime',
+      title: 'วันที่และเวลาเช็คอิน',
       render: (text, record) => dayjs(record.Checkin_DateTime).format('DD/MM/YYYY HH:mm'),
       key: 'Checkin_DateTime',
     },
     {
-      title: 'Checkout_DateTime',
+      title: 'วันที่และเวลาเช็คเอาท์',
       render: (text, record) => dayjs(record.Checkout_DateTime).format('DD/MM/YYYY HH:mm'),
       key: 'Checkout_DateTime',
     },
     {
-      title: 'Parking_ID',
+      title: 'เลขที่จอด',
       dataIndex: 'Parking_ID',
       key: 'Parking_ID',
     },
     {
-      title: 'Actions',
+      title: '',
       render: (text, record) => (
         <Button onClick={() => handleViewReceipt(record.Deposit_ID)} type="primary">
-          View Receipt
+          ดูใบเสร็จ
         </Button>
       ),
       key: 'actions',
@@ -112,23 +110,23 @@ function CheckoutTable() {
       )}
 
       <Modal
-        title="Receipt"
+        title="ใบเสร็จ"
         visible={receiptModalVisible}
         onCancel={() => setReceiptModalVisible(false)}
         footer={null}
       >
         {receipt && (
           <div>
-            <p><strong>Receipt ID:</strong> {receipt.Receipt_ID}</p>
-            <p><strong>Deposit ID:</strong> {receipt.Deposit_ID}</p>
-            <p><strong>Customer:</strong> {receipt.Customer_Fname} {receipt.Customer_Lname}</p>
-            <p><strong>Register Plate No:</strong> {receipt.RegisterPlateNo}</p>
-            <p><strong>Check-in Time:</strong> {dayjs(receipt.Checkin_DateTime).format('DD/MM/YYYY HH:mm')}</p>
-            <p><strong>Checkout Time:</strong> {dayjs(receipt.Checkout_DateTime).format('DD/MM/YYYY HH:mm')}</p>
-            <p><strong>Type:</strong> {receipt.Type_name}</p>
-            <p><strong>Parking ID:</strong> {receipt.Parking_ID}</p>
-            <p><strong>Parking Time:</strong> {receipt.Parking_Time}  ชั่วโมง</p>
-            <p><strong>Parking Fee:</strong> {receipt.Parking_Fee} บาท</p>
+            <p><strong>เลขที่ใบเสร็จ:</strong> {receipt.Receipt_ID}</p>
+            <p><strong>เลขที่การฝาก:</strong> {receipt.Deposit_ID}</p>
+            <p><strong>ชื่อลูกค้า:</strong> {receipt.Customer_Fname} {receipt.Customer_Lname}</p>
+            <p><strong>ทะเบียนรถ:</strong> {receipt.RegisterPlateNo}</p>
+            <p><strong>ประเภท:</strong> {receipt.Type_name}</p>
+            <p><strong>เลขที่จอด:</strong> {receipt.Parking_ID}</p>
+            <p><strong>วันที่และเวลาเช็คอิน:</strong> {dayjs(receipt.Checkin_DateTime).format('DD/MM/YYYY HH:mm')}</p>
+            <p><strong>วันที่และเวลาเช็คเอาท์:</strong> {dayjs(receipt.Checkout_DateTime).format('DD/MM/YYYY HH:mm')}</p>
+            <p><strong>เวลาจอด:</strong> {receipt.Parking_Time}  ชั่วโมง</p>
+            <p><strong>ค่าที่จอด:</strong> {receipt.Parking_Fee} บาท</p>
           </div>
         )}
       </Modal>

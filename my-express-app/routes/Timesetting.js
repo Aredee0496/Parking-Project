@@ -6,4 +6,4 @@ router.get('/timesetting', TimesettingController.getAll);
 router.put('/timesetting/:id', TimesettingController.update);
 
 
-module.exports = router;
+module.exports = router; 

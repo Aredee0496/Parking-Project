@@ -74,18 +74,18 @@ const EmployeeData = () => {
 
   const columns = [
     { title: 'ID', dataIndex: 'Officer_ID', key: 'Officer_ID' },
-    { title: 'First Name', dataIndex: 'Officer_Fname', key: 'Officer_Fname' },
-    { title: 'Last Name', dataIndex: 'Officer_Lname', key: 'Officer_Lname' },
-    { title: 'Username', dataIndex: 'Officer_Username', key: 'Officer_Username' },
-    { title: 'Telephone', dataIndex: 'Officer_Tel', key: 'Officer_Tel' },
-    { title: 'Role', dataIndex: 'Role', key: 'Role' }, 
+    { title: 'ชื่อ', dataIndex: 'Officer_Fname', key: 'Officer_Fname' },
+    { title: 'นามสกุล', dataIndex: 'Officer_Lname', key: 'Officer_Lname' },
+    { title: 'ชื่อผู้ใช้', dataIndex: 'Officer_Username', key: 'Officer_Username' },
+    { title: 'เบอร์โทรศัพท์', dataIndex: 'Officer_Tel', key: 'Officer_Tel' },
+    { title: 'ตำแหน่ง', dataIndex: 'Role', key: 'Role' }, 
     {
-      title: 'Actions',
+      title: '',
       key: 'actions',
       render: (text, officer) => (
         <>
-          <Button onClick={() => openEditModal(officer)} style={{ marginRight: 5 }}>Edit</Button>
-          <Button danger onClick={() => handleDelete(officer.Officer_ID)}>Delete</Button>
+          <Button onClick={() => openEditModal(officer)} style={{ marginRight: 5 }}>แก้ไข</Button>
+          <Button danger onClick={() => handleDelete(officer.Officer_ID)}>ลบ</Button>
         </>
       ),
     },
@@ -94,74 +94,72 @@ const EmployeeData = () => {
   return (
     <div>
       <Button type="primary" onClick={() => setShowAddModal(true)}>
-        Add Officer
+        เพิ่มพนักงาน
       </Button>
+      <p></p>
       <Modal
-        title="Add Officer"
+        title="เพิ่มพนักงาน"
         visible={showAddModal}
         onCancel={() => setShowAddModal(false)}
         footer={null}
       >
         <Form onFinish={handleAddSubmit} layout="vertical">
-          <Form.Item label="First Name" name="Officer_Fname" rules={[{ required: true }]}>
+          <Form.Item label="ชื่อ" name="Officer_Fname" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="Last Name" name="Officer_Lname" rules={[{ required: true }]}>
+          <Form.Item label="นามสกุล" name="Officer_Lname" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="Username" name="Officer_Username" rules={[{ required: true }]}>
+          <Form.Item label="ชื่อผู้ใช้" name="Officer_Username" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="Password" name="Officer_Password" rules={[{ required: true }]}>
+          <Form.Item label="รหัสผ่าน" name="Officer_Password" rules={[{ required: true }]}>
             <Input.Password />
           </Form.Item>
-          <Form.Item label="Telephone" name="Officer_Tel" rules={[{ required: true }]}>
+          <Form.Item label="เบอร์โทรศัพท์" name="Officer_Tel" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="Role" name="Role" rules={[{ required: true }]}> 
+          <Form.Item label="ตำแหน่ง" name="Role" rules={[{ required: true }]}> 
             <Select>
-              <Option value="employee">Employee</Option>
-              <Option value="manager">Manager</Option>
+              <Option value="Employee">พนักงาน</Option>
+              <Option value="Manager">ผู้จัดการ</Option>
             </Select>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">Submit</Button>
+            <Button type="primary" htmlType="submit">ยืนยัน</Button>
           </Form.Item>
         </Form>
       </Modal>
       <Modal
-        title="Edit Officer"
+        title="แก้ไขข้อมูลพนักงาน"
         visible={showEditModal}
         onCancel={() => setShowEditModal(false)}
         footer={null}
       >
         <Form initialValues={editOfficer} onFinish={handleEditSubmit} layout="vertical">
-          <Form.Item label="ID" name="Officer_ID" rules={[{ required: true }]}>
-            <Input disabled />
-          </Form.Item>
-          <Form.Item label="First Name" name="Officer_Fname" rules={[{ required: true }]}>
+          <Form.Item label="ชื่อ" name="Officer_Fname" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="Last Name" name="Officer_Lname" rules={[{ required: true }]}>
+          <Form.Item label="นามสกุล" name="Officer_Lname" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="Username" name="Officer_Username" rules={[{ required: true }]}>
+          <Form.Item label="ชื่อผู้ใช้" name="Officer_Username" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="Password" name="Officer_Password" rules={[{ required: true }]}>
+          <Form.Item label="รหัสผ่าน" name="Officer_Password" rules={[{ required: true }]}>
             <Input.Password />
           </Form.Item>
-          <Form.Item label="Telephone" name="Officer_Tel" rules={[{ required: true }]}>
+          <Form.Item label="เบอร์โทรศัพท์" name="Officer_Tel" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item label="Role" name="Role" rules={[{ required: true }]}> 
+          <Form.Item label="ตำแหน่ง" name="Role" rules={[{ required: true }]}> 
             <Select>
-              <Option value="employee">Employee</Option>
-              <Option value="manager">Manager</Option>
+              <Option value="employee">พนักงาน</Option>
+              <Option value="manager">ผู้จัดการ</Option>
             </Select>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">Submit</Button>
+            <Button type="primary" htmlType="submit">ยืนยัน</Button>
           </Form.Item>
         </Form>
       </Modal>

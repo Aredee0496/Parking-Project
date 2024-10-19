@@ -35,7 +35,7 @@ const CallshuttleData = () => {
 
   useEffect(() => {
     fetchData();
-    fetchShuttleOptions(); // Fetch shuttle options when component mounts
+    fetchShuttleOptions();
   }, []);
 
   const handleConfirm = async (id, selectedShuttleID) => {
@@ -43,7 +43,6 @@ const CallshuttleData = () => {
       try {
         await axios.put(`http://localhost:5000/api/callshuttles/${id}`, { Shuttle_ID: selectedShuttleID });
         
-        // Show success notification
         notification.success({
           message: 'สำเร็จ',
           description: 'การอัปเดตสำเร็จ',
@@ -103,7 +102,7 @@ const CallshuttleData = () => {
       key: 'status',
     },
     {
-      title: 'Action',
+      title: 'เลือกรถรับส่ง',
       key: 'action',
       render: (_, record) => (
         <Select 

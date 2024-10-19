@@ -2,41 +2,38 @@
 
 body {
   background-color: #ececec;
-  background-image: url('../public/bg.png'); /* ใช้ url() สำหรับการกำหนดรูปภาพ */
-  background-size: cover; /* ไม่มี ' ' */
-  background-position: center; /* ไม่มี ' ' */
-  margin: 0; /* ปิด comment */
-  font-family: "kanit", sans-serif; /* ตั้งค่าฟอนต์เริ่มต้น */
+  background-size: cover; 
+  background-position: center; 
+  margin: 0; 
+  font-family: "kanit", sans-serif; 
 }
 
 
 .app {
   display: flex;
-  flex-direction: row; /* Align items in a row */
+  flex-direction: row; 
 }
 
 .main-content {
   flex-grow: 1;
-  margin-left: 250px; /* Margin for sidebar */
+  margin-left: 250px; 
   padding: 20px;
-  transition: margin-left 0.3s ease; /* Smooth transition for margin change */
+  transition: margin-left 0.3s ease; 
 }
 
-/* Media query for smaller screens */
 @media (max-width: 768px) {
   .app {
-    flex-direction: column; /* Stack items vertically */
+    flex-direction: column; 
   }
 
   .main-content {
-    margin-left: 0; /* Remove left margin on small screens */
-    padding: 10px; /* Adjust padding for smaller screens */
+    margin-left: 0; 
+    padding: 10px; 
   }
 }
 
-/* Media query for very small screens */
 @media (max-width: 480px) {
   .main-content {
-    padding: 5px; /* Further reduce padding */
+    padding: 5px; 
   }
 }

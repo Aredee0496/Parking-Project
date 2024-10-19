@@ -97,22 +97,22 @@ const ShuttleData = () => {
       key: 'Shuttle_ID',
     },
     {
-      title: 'Register Plate No',
+      title: 'ทะเบียนรถ',
       dataIndex: 'RegisterPlateNo',
       key: 'RegisterPlateNo',
     },
     {
-      title: 'Type',
+      title: 'ประเภท',
       dataIndex: 'Type',
       key: 'Type',
     },
     {
-      title: 'Actions',
+      title: '',
       key: 'actions',
       render: (text, shuttle) => (
         <>
-          <Button onClick={() => openEditModal(shuttle)} style={{ marginRight: 5 }}>Edit</Button>
-          <Button onClick={() => handleDelete(shuttle.Shuttle_ID)} danger>Delete</Button>
+          <Button onClick={() => openEditModal(shuttle)} style={{ marginRight: 5 }}>แก้ไข</Button>
+          <Button onClick={() => handleDelete(shuttle.Shuttle_ID)} danger>ลบ</Button>
         </>
       ),
     },
@@ -124,18 +124,18 @@ const ShuttleData = () => {
   return (
     <div className="table-container">
       <Button type="primary" onClick={() => setShowAddModal(true)} style={{ marginBottom: 16 }}>
-        Add Shuttle
+        เพิ่มรถรับส่ง
       </Button>
       
       <Modal
-        title="Add Shuttle"
+        title="เพิ่มรถรับส่ง"
         visible={showAddModal}
         onCancel={() => setShowAddModal(false)}
         onOk={handleAddSubmit}
       >
         <form>
           <label>
-            Register Plate No:
+            เลขทะเบียนรถ:
             <Input
               type="text"
               name="RegisterPlateNo"
@@ -145,7 +145,7 @@ const ShuttleData = () => {
             />
           </label>
           <label>
-            Type:
+            ประเภท:
             <Input
               type="text"
               name="Type"
@@ -158,7 +158,7 @@ const ShuttleData = () => {
       </Modal>
       
       <Modal
-        title="Edit Shuttle"
+        title="แก้ไขข้อมูลรถรับส่ง"
         visible={showEditModal}
         onCancel={() => setShowEditModal(false)}
         onOk={handleEditSubmit}
@@ -175,7 +175,7 @@ const ShuttleData = () => {
             />
           </label>
           <label>
-            Register Plate No:
+            เลขทะเบียนรถ:
             <Input
               type="text"
               name="RegisterPlateNo"
@@ -185,7 +185,7 @@ const ShuttleData = () => {
             />
           </label>
           <label>
-            Type:
+            ประเภท:
             <Input
               type="text"
               name="Type"

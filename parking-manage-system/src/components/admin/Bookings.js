@@ -9,7 +9,6 @@ import CheckoutTable from './CheckoutTable';
 const Bookings = () => {
   const location = useLocation();
 
-  // Determine the active tab based on the current route
   const getActiveStyle = (path) => ({
     backgroundColor: location.pathname.includes(path) ? '#1890ff' : 'white',
     color: location.pathname.includes(path) ? 'white' : 'black',
@@ -25,7 +24,7 @@ const Bookings = () => {
               icon={<BookOutlined />}
               style={getActiveStyle('reservations')}
             >
-              <Link to="reservations" style={{ color: 'inherit' }}>Reservations</Link>
+              <Link to="reservations" style={{ color: 'inherit' }}>การจอง</Link>
             </Button>
           </li>
           <li style={{ marginRight: '8px' }}>
@@ -34,7 +33,7 @@ const Bookings = () => {
               icon={<CheckCircleOutlined />}
               style={getActiveStyle('checkins')}
             >
-              <Link to="checkins" style={{ color: 'inherit' }}>Check-ins</Link>
+              <Link to="checkins" style={{ color: 'inherit' }}>การเช็คอิน</Link>
             </Button>
           </li>
           <li>
@@ -43,14 +42,13 @@ const Bookings = () => {
               icon={<CheckSquareOutlined />}
               style={getActiveStyle('checkouts')}
             >
-              <Link to="checkouts" style={{ color: 'inherit' }}>Check-outs</Link>
+              <Link to="checkouts" style={{ color: 'inherit' }}>การเช็คเอาท์</Link>
             </Button>
           </li>
         </ul>
       </nav>
 
       <Routes>
-        {/* Redirect to reservations as default */}
         <Route path="/" element={<Navigate to="reservations" replace />} />
         <Route path="reservations" element={<ReservationTable />} />
         <Route path="checkins" element={<CheckinTable />} />

@@ -115,7 +115,7 @@ function Booking() {
     try {
       const response = await axios.post('http://localhost:5000/api/deposits', bookingData);
       console.log("Booking response:", response.data);
-      message.success("จองสำเร็จ! Parking ID ของคุณคือ: " + Parking_ID);
+      message.success("จองสำเร็จ! เลขที่จอดของคุณคือ: " + Parking_ID);
       window.location.reload();
     } catch (error) {
       console.error("Error booking:", error);
@@ -152,6 +152,7 @@ function Booking() {
             <p><strong>วันที่และเวลาที่จอง:</strong> {dayjs(deposits.Booking_DateTime).format('YYYY-MM-DD HH:mm')}</p>
             <p><strong>เลขที่จอด:</strong> {deposits.Parking_ID}</p>
             <p><strong>สถานะ:</strong> {deposits.DepositStatus_name}</p>
+            <p><strong>กรุณามาก่อนเวลา:</strong>{" "}{dayjs(deposits.Booking_DateTime).add(15, "minute").format("YYYY-MM-DD HH:mm")}</p>
             <Button danger onClick={handleCancel} style={{ width: '100%' }}>ยกเลิกการจอง</Button>
           </Card>
         ) : (<Card>

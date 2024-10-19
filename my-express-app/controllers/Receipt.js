@@ -10,6 +10,15 @@ const ReceiptController = {
     });
   },
 
+  get: (req, res) => {
+    Receipt.get((err, receipts) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(receipts);
+    });
+  },
+
   getById: (req, res) => {
     const id = req.params.id;
     Receipt.getById(id, (err, receipt) => {

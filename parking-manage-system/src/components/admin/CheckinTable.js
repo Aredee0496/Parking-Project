@@ -36,19 +36,15 @@ function CheckinTable() {
         DepositStatus_ID: 3, 
       });
 
-      // Fetch Deposit Data to calculate fee
       const depositResponse = await axios.get(`http://localhost:5000/api/deposits/${id}`);
       const deposit = depositResponse.data;
 
-      // Fetch Type Data for pricing
       const typeResponse = await axios.get(`http://localhost:5000/api/types/${deposit.Type_ID}`);
       const type = typeResponse.data;
 
-      // Calculate parking time in hours
       const parkingTime = Math.max(dayjs(deposit.Checkout_DateTime).diff(dayjs(deposit.Checkin_DateTime), "hour"), 1);
       console.log("Parking Time:", parkingTime);
       
-      // Calculate fee based on Type_ID
       let parkingFee = 0;
       const fullDays = Math.floor(parkingTime / 24);
       const remainingHours = parkingTime % 24;
@@ -59,7 +55,6 @@ function CheckinTable() {
         parkingFee = fullDays * type.Price_Day + (remainingHours <= 5 ? remainingHours * type.Price_Hour : type.Price_Day);
       }
 
-      // Create Receipt
       const receiptResponse = await axios.post("http://localhost:5000/api/receipts", {
         Deposit_ID: id,
         Receipt_DateTime: dayjs().format('YYYY-MM-DDTHH:mm:ss'),
@@ -102,7 +97,7 @@ function CheckinTable() {
 
   const columns = [
     {
-      title: 'Deposit_ID',
+      title: 'เลขที่การฝาก',
       dataIndex: 'Deposit_ID',
       key: 'Deposit_ID',
     },
@@ -112,22 +107,22 @@ function CheckinTable() {
       key: 'customer',
     },
     {
-      title: 'Register Plate No',
+      title: 'ทะเบียนรถ',
       dataIndex: 'RegisterPlateNo', 
       key: 'RegisterPlateNo',
     },
     {
-      title: 'Checkin_DateTime',
+      title: 'วันที่และเวลาเช็คอิน',
       render: (text, record) => dayjs(record.Checkin_DateTime).format('DD/MM/YYYY HH:mm'),
       key: 'Checkin_DateTime',
     },
     {
-      title: 'Parking_ID',
+      title: 'เลขที่จอด',
       dataIndex: 'Parking_ID',
       key: 'Parking_ID',
     },
     {
-      title: 'Actions',
+      title: '',
       render: (text, record) => (
         <Button onClick={() => handleCheckout(record.Deposit_ID)} type="primary">
           Check-out
@@ -152,22 +147,29 @@ function CheckinTable() {
       )}
 
       <Modal
-        title="Receipt"
+        title="ใบเสร็จ"
         visible={receiptModalVisible}
         onCancel={() => setReceiptModalVisible(false)}
         footer={null}
       >
         {receiptData && (
           <div>
-            <p><strong>Deposit ID:</strong> {receiptData.Deposit_ID}</p>
-            <p><strong>Customer:</strong> {receiptData.Customer}</p>
-            <p><strong>Register Plate No:</strong> {receiptData.RegisterPlateNo}</p>
-            <p><strong>Check-in Time:</strong> {dayjs(receiptData.Checkin_DateTime).format('DD/MM/YYYY HH:mm')}</p>
-            <p><strong>Checkout Time:</strong> {dayjs(receiptData.Checkout_DateTime).format('DD/MM/YYYY HH:mm')}</p>
-            <p><strong>Type:</strong> {receiptData.Type_Name}</p>
-            <p><strong>Parking ID:</strong> {receiptData.Parking_ID}</p>
-            <p><strong>Parking Time:</strong> {receiptData.Parking_Time} ชั่วโมง</p>
-            <p><strong>Parking Fee:</strong> {receiptData.Parking_Fee} THB</p>
+            <p><strong>เลขที่การฝาก:</strong> {receiptData.Deposit_ID}</p>
+            <p><strong>ชื่อลูกค้า:</strong> {receiptData.Customer}</p>
+            <p><strong>ทะเบียนรถ:</strong> {receiptData.RegisterPlateNo}</p>
+            <p><strong>ประเภท:</strong> {receiptData.Type_Name}</p>
+            <p><strong>เลขที่จอด:</strong> {receiptData.Parking_ID}</p>
+            <p><strong>วันที่และเวลาเช็คอิน:</strong> {dayjs(receiptData.Checkin_DateTime).format('DD/MM/YYYY HH:mm')}</p>
+            <p><strong>วันที่และเวลาเช็คเอาท์:</strong> {dayjs(receiptData.Checkout_DateTime).format('DD/MM/YYYY HH:mm')}</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px' }}>
+  <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#1890ff' }}>
+    <strong>เวลาจอด:</strong> {receiptData.Parking_Time} ชั่วโมง
+  </div>
+  <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#f5222d', marginLeft: '20px' }}>
+    <strong>ค่าจอด:</strong> {receiptData.Parking_Fee} บาท
+  </div>
+</div>
+
           </div>
         )}
       </Modal>

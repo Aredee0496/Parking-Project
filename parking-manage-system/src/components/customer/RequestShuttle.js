@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Card, Input, Button, Alert, Row, Col } from "antd";
+import { Card, Button, InputNumber, Typography, Alert, Row, Col, Empty } from "antd";
+
+const { Title, Text } = Typography;
 
 function RequestShuttle() {
   const { user } = useAuth();
@@ -38,6 +40,7 @@ function RequestShuttle() {
       };
 
       fetchData();
+
       const intervalId = setInterval(fetchData, 10000);
       return () => clearInterval(intervalId);
     }
@@ -72,51 +75,69 @@ function RequestShuttle() {
     });
   };
 
-  return (
-    <div className="request-shuttle-mobile">
-      <h1>เรียกรถรับส่ง</h1>
+  if (error) {
+    return <Alert message={error} type="error" showIcon />;
+  }
 
-      {error && <Alert message={error} type="error" showIcon />}
+  return (
+    <div className="request-shuttle-container">
+      <Title level={2} style={{ textAlign: "center" }}>เรียกรถรับส่ง</Title>
 
       <div className="section">
-        <Row gutter={16}>
-          {deposits.map(deposit => (
-            <Col span={8} key={deposit.Deposit_ID}>
-              <Card title={`Deposit ID: ${deposit.Deposit_ID}`} bordered={false}>
-                <Input
-                  type="number"
-                  placeholder="จำนวนคน"
-                  value={peopleCount[deposit.Deposit_ID] || ''}
-                  onChange={(e) => handlePeopleChange(deposit.Deposit_ID, e.target.value)}
-                  className="people-input"
-                  min="1"
-                />
-                <Button
-                  type="primary"
-                  onClick={() => handleButtonClick(deposit.Deposit_ID)}
-                  disabled={isButtonDisabled(deposit.Deposit_ID)}
-                  style={{ marginTop: '10px' }}
-                >
-                  เรียกรถ
-                </Button>
+        <Row gutter={[16, 16]}>
+          {deposits.length === 0 ? (
+            <Col span={24}>
+              <Card bordered={false} style={{ textAlign: 'center' }}>
+                <Empty description="🚫 ไม่มีรายการฝาก 🚫" />
               </Card>
             </Col>
-          ))}
+          ) : (
+            deposits.map(deposit => (
+              <Col xs={24} md={12} key={deposit.Deposit_ID}>
+                <Card title={`หมายเลขการฝาก: ${deposit.Deposit_ID}`} bordered={false}>
+                  <InputNumber
+                    min={1}
+                    placeholder="จำนวนคน"
+                    value={peopleCount[deposit.Deposit_ID] || ''}
+                    onChange={(value) => handlePeopleChange(deposit.Deposit_ID, value)}
+                    style={{ width: '100%', marginBottom: '10px' }}
+                  />
+                  <Button
+                    type="primary"
+                    onClick={() => handleButtonClick(deposit.Deposit_ID)}
+                    disabled={isButtonDisabled(deposit.Deposit_ID)}
+                    style={{ width: '100%' }}
+                  >
+                    เรียกรถ
+                  </Button>
+                </Card>
+              </Col>
+            ))
+          )}
         </Row>
       </div>
 
       <div className="section">
-        <h2>ข้อมูลการเรียกรถ</h2>
-        <Row gutter={16}>
-          {callShuttles.map(callShuttle => (
-            <Col span={8} key={callShuttle.CallShuttle_ID}>
-              <Card title={`Call Shuttle ID: ${callShuttle.CallShuttle_ID}`} bordered={false}>
-                <p><strong>เลขทะเบียนรถรับส่ง:</strong> {callShuttle.RegisterPlateNo}</p>
-                <p><strong>จำนวนผู้โดยสาร:</strong> {callShuttle.People}</p>
-                <p><strong>Status:</strong> {callShuttle.CS_Status_name}</p>
+        <Title level={3}>ข้อมูลการเรียกรถ</Title>
+        <Row gutter={[16, 16]}>
+          {callShuttles.length === 0 ? (
+            <Col span={24}>
+              <Card bordered={false} style={{ textAlign: 'center' }}>
+                <Empty description="🚫 ไม่มีรายการเรียกรถ 🚫" />
               </Card>
             </Col>
-          ))}
+          ) : (
+            callShuttles.map(callShuttle => (
+              <Col xs={24} md={12} key={callShuttle.CallShuttle_ID}>
+                <Card>
+                  <Text><strong>หมายเลขการฝาก:</strong> {callShuttle.Deposit_ID}</Text><br />
+                  <Text><strong>เลขทะเบียนรถรับส่ง:</strong> {callShuttle.RegisterPlateNo}</Text><br />
+                  <Text><strong>จำนวนผู้โดยสาร:</strong> {callShuttle.People}</Text><br />
+                  <Text><strong>สถานะการเรียกรถ:</strong> {callShuttle.CS_Status_name}</Text>
+                </Card>
+              </Col>
+            ))
+          )}
         </Row>
       </div>
     </div>

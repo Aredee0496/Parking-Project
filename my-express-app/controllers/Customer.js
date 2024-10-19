@@ -22,7 +22,17 @@ const CustomerController = {
 
   create: (req, res) => {
     const data = req.body;
-    Customer.create(data, (err, newId) => { // เปลี่ยนจาก insertId เป็น newId
+    Customer.create(data, (err, newId) => { 
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json({ id: newId }); 
+    });
+  },
+
+  register: (req, res) => {
+    const data = req.body;
+    Customer.register(data, (err, newId) => { 
       if (err) {
         return res.status(500).json({ error: err.message });
       }

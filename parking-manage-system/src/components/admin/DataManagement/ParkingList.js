@@ -104,36 +104,36 @@ function ParkingList() {
 
   const columns = [
     {
-      title: 'Parking_ID',
+      title: 'ID',
       dataIndex: 'Parking_ID',
       key: 'Parking_ID',
     },
     {
-      title: 'Type_name',
+      title: 'ประเภท',
       dataIndex: 'Type_name',
       key: 'Type_name',
     },
     {
-      title: 'Price_Hour',
+      title: 'ราคา ช.ม.',
       dataIndex: 'Price_Hour',
       key: 'Price_Hour',
     },
     {
-      title: 'Price_Day',
+      title: 'ราคาวัน',
       dataIndex: 'Price_Day',
       key: 'Price_Day',
     },
     {
-      title: 'PStatus_name',
+      title: 'สถานะ',
       dataIndex: 'PStatus_name',
       key: 'PStatus_name',
     },
     {
-      title: 'Actions',
+      title: '',
       key: 'actions',
       render: (_, parking) => (
         <Button type="default" danger onClick={() => handleDelete(parking.Parking_ID)}>
-          Delete
+          ลบ
         </Button>
       ),
     },
@@ -144,11 +144,11 @@ function ParkingList() {
       {error && <p>{error}</p>}
 
       <Collapse>
-        <Panel header="Add Parking" key="1" extra={<Button onClick={() => setShowAddForm(!showAddForm)}>{showAddForm ? 'Hide' : 'Show'}</Button>}>
+        <Panel header="เพิ่มที่จอด" key="1" extra={<Button onClick={() => setShowAddForm(!showAddForm)}>{showAddForm ? 'ซ่อน' : 'แสดง'}</Button>}>
           {showAddForm && (
             <Form onFinish={handleAddParking}>
-              <Form.Item name="Type_ID" label="Type" rules={[{ required: true, message: 'Please select a type!' }]}>
-                <Select placeholder="Select Type">
+              <Form.Item name="Type_ID" label="ประเภท" rules={[{ required: true, message: 'Please select a type!' }]}>
+                <Select placeholder="เลือกประเภท">
                   {types.map((type) => (
                     <Option key={type.Type_ID} value={type.Type_ID}>
                       {type.Type_name}
@@ -156,18 +156,18 @@ function ParkingList() {
                   ))}
                 </Select>
               </Form.Item>
-              <Form.Item name="quantity" label="Quantity" rules={[{ required: true, message: 'Please enter a quantity!' }]}>
+              <Form.Item name="quantity" label="จำนวน" rules={[{ required: true, message: 'Please enter a quantity!' }]}>
                 <Input type="number" min={1} defaultValue={1} />
               </Form.Item>
-              <Button type="primary" htmlType="submit">Add Parking</Button>
+              <Button type="primary" htmlType="submit">ยืนยัน</Button>
             </Form>
           )}
         </Panel>
-        <Panel header="Edit Price" key="2" extra={<Button onClick={() => setShowEditPriceForm(!showEditPriceForm)}>{showEditPriceForm ? 'Hide' : 'Show'}</Button>}>
+        <Panel header="แก้ไขราคา" key="2" extra={<Button onClick={() => setShowEditPriceForm(!showEditPriceForm)}>{showEditPriceForm ? 'ซ่อน' : 'แสดง'}</Button>}>
           {showEditPriceForm && (
             <Form onFinish={handleEditPrice}>
-              <Form.Item name="Type_ID" label="Type" rules={[{ required: true, message: 'Please select a type!' }]}>
-                <Select placeholder="Select Type">
+              <Form.Item name="Type_ID" label="ประเภท" rules={[{ required: true, message: 'กรุณาเลือกประเภท!' }]}>
+                <Select placeholder="เลือกประเภท">
                   {types.map((type) => (
                     <Option key={type.Type_ID} value={type.Type_ID}>
                       {type.Type_name}
@@ -175,13 +175,13 @@ function ParkingList() {
                   ))}
                 </Select>
               </Form.Item>
-              <Form.Item name="newPriceHour" label="New Price per Hour" rules={[{ required: true, message: 'Please enter a new price!' }]}>
+              <Form.Item name="newPriceHour" label="ราคาต่อ ช.ม." rules={[{ required: true, message: 'กรุณากรอกราคา!' }]}>
                 <Input type="number" min={0} />
               </Form.Item>
-              <Form.Item name="newPriceDay" label="New Price per Day" rules={[{ required: true, message: 'Please enter a new price!' }]}>
+              <Form.Item name="newPriceDay" label="ราคาต่อวัน" rules={[{ required: true, message: 'กรุณากรอกราคา!' }]}>
                 <Input type="number" min={0} />
               </Form.Item>
-              <Button type="primary" htmlType="submit">Update Prices</Button>
+              <Button type="primary" htmlType="submit">ยืนยัน</Button>
             </Form>
           )}
         </Panel>

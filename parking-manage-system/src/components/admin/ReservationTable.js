@@ -74,7 +74,7 @@ function ReservationTable() {
 
   const columns = [
     {
-      title: 'Deposit_ID',
+      title: 'เลขที่การฝาก',
       dataIndex: 'Deposit_ID',
       key: 'Deposit_ID',
     },
@@ -84,7 +84,7 @@ function ReservationTable() {
       key: 'customer',
     },
     {
-      title: 'Register Plate No',
+      title: 'ทะเบียนรถ',
       render: (text, record) => {
         const customerCars = cars.filter(car => car.Customer_ID === record.Customer_ID);
 
@@ -105,17 +105,17 @@ function ReservationTable() {
       key: 'registerPlateNo',
     },
     {
-      title: 'Booking_DateTime',
+      title: 'วันที่และเวลาจอง',
       render: (text, record) => dayjs(record.Booking_DateTime).format('DD/MM/YYYY HH:mm'),
       key: 'Booking_DateTime',
     },
     {
-      title: 'Parking_ID',
+      title: 'เลขที่จอดรถ',
       dataIndex: 'Parking_ID',
       key: 'Parking_ID',
     },
     {
-      title: 'Actions',
+      title: '',
       render: (text, record) => (
         <Button onClick={() => handleCheckIn(record.Deposit_ID)} type="primary">
           Check-in

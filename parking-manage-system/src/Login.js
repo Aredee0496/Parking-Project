@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "./context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import axios from 'axios'; 
-import "./Login.css";
+import { Form, Input, Button, Card, Typography } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
+
+const { Title, Text } = Typography;
 
 const Login = () => {
-  const { setUser } = useAuth(); // เปลี่ยนให้เหมาะสม
-  const [username, setUsername] = useState(""); // เปลี่ยนชื่อเป็น username
-  const [password, setPassword] = useState("");
+  const { setUser } = useAuth(); 
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -18,13 +19,11 @@ const Login = () => {
     }
   }, [navigate]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async (values) => {
     try {
       const response = await axios.post("http://localhost:5000/api/login", {
-        username: username, 
-        password: password,
+        username: values.username, 
+        password: values.password,
       });
 
       if (response.data.success) {
@@ -46,34 +45,50 @@ const Login = () => {
   };
 
   return (
-    <div className="main-login">
-      <div className="login">
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>Username:</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)} // เปลี่ยนเป็น setUsername
-            />
-          </div>
-          <div>
-            <label>Password:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          {error && <div className="error">{error}</div>}
-          <button type="submit">Login</button>
-        </form>
+    <div className="main-login" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#f0f2f5' }}>
+      <Card
+        style={{ width: 350, textAlign: 'center', padding: '20px' }}
+        cover={
+          <img
+            alt="logo"
+            src="LOGO.png"
+            style={{ width: '150px', margin: '0 auto', paddingTop: '20px' }}
+          />
+        }
+      >
+        <Title level={3}>เข้าสู่ระบบ</Title>
+        <Form
+          name="login_form"
+          initialValues={{ remember: true }}
+          onFinish={handleSubmit}
+        >
+          <Form.Item
+            name="username"
+            rules={[{ required: true, message: 'กรุณากรอก Username!' }]}
+          >
+            <Input prefix={<UserOutlined />} placeholder="Username" />
+          </Form.Item>
+
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: 'กรุณากรอก Password!' }]}
+          >
+            <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+          </Form.Item>
+
+          {error && <Text type="danger">{error}</Text>}
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              เข้าสู่ระบบ
+            </Button>
+          </Form.Item>
+        </Form>
+
         <div>
-          <p>
-            หากยังไม่ได้สมัครสมาชิก? <Link to="/register">สมัครสมาชิก</Link>
-          </p>
+          <Text>หากยังไม่ได้สมัครสมาชิก? <Link to="/register">สมัครสมาชิก</Link></Text>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };
