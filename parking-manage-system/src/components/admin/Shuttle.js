@@ -44,8 +44,8 @@ const CallshuttleData = () => {
         await axios.put(`http://localhost:5000/api/callshuttles/${id}`, { Shuttle_ID: selectedShuttleID });
         
         notification.success({
-          message: 'สำเร็จ',
-          description: 'การอัปเดตสำเร็จ',
+          message: 'success',
+          description: 'ส่งรถรับผู้โดยสารสำเร็จ',
         });
 
         const confirmedShuttle = callshuttles.find(shuttle => shuttle.CallShuttle_ID === id);

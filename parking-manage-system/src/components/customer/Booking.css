@@ -1,0 +1,45 @@
+.booking-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .booking-content {
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 18px; 
+  }
+  
+  .booking-card {
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-size: 18px; 
+  }
+  
+  .parking-button {
+    margin-right: 10px;
+    width: 48%;
+  }
+  
+  .date-picker,
+  .submit-button {
+    width: 100%;
+  }
+  
+  .parking-price-info p {
+    font-size: 18px; 
+  }
+  
+  @media (max-width: 768px) {
+    .booking-content {
+      padding: 10px;
+    }
+  
+    .parking-button {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
+  

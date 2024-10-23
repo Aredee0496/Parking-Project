@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Card, Col, Row, Statistic, Table, Button, Modal, Select } from "antd";
 import { BellOutlined, BellFilled } from "@ant-design/icons";
 import { Pie } from "react-chartjs-2";
@@ -44,12 +44,20 @@ function Home() {
       fetchShuttleCalls();
       fetchTimeSetting();
     }
-
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
 
-    return () => clearInterval(timer);
+    const interval = setInterval(() => {
+      fetchParkingData();
+      fetchReservations();
+      fetchShuttleCalls();
+    }, 3000);
+
+    return () => {
+      clearInterval(timer);
+      clearInterval(interval);
+    };
   }, [user, navigate]);
 
   const fetchTimeSetting = async () => {
@@ -63,7 +71,9 @@ function Home() {
 
   const updateTimeSetting = async () => {
     try {
-      await axios.put("http://localhost:5000/api/timesetting/1", { time: timeSetting });
+      await axios.put("http://localhost:5000/api/timesetting/1", {
+        time: timeSetting,
+      });
       setIsModalVisible(false);
       fetchTimeSetting();
     } catch (error) {
@@ -235,37 +245,37 @@ function Home() {
   return (
     <div style={{ padding: "0px" }}>
       <div
-  style={{
-    width: "100%",
-    backgroundColor: "#001529",
-    padding: "1px",
-    color: "#fff",
-    fontSize: "18px",
-    position: "sticky",
-    borderRadius: "8px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  }}
->
-  <div style={{ flexGrow: 1, textAlign: "center" }}>
-    {currentTime.toLocaleDateString("th-TH")} -{" "}
-    {currentTime.toLocaleTimeString("th-TH", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    })}
-  </div>
-  <Button
-    type="primary"
-    size="small"
-    style={{ marginLeft: "auto",marginRight: "2px" }}
-    onClick={() => setIsModalVisible(true)}
-  >
-    กำหนดเวลาจองล่วงหน้า
-  </Button>
-</div>
+        style={{
+          width: "100%",
+          backgroundColor: "#001529",
+          padding: "1px",
+          color: "#fff",
+          fontSize: "18px",
+          position: "sticky",
+          borderRadius: "8px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <div style={{ flexGrow: 1, textAlign: "center" }}>
+          {currentTime.toLocaleDateString("th-TH")} -{" "}
+          {currentTime.toLocaleTimeString("th-TH", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+          })}
+        </div>
+        <Button
+          type="primary"
+          size="small"
+          style={{ marginLeft: "auto", marginRight: "2px" }}
+          onClick={() => setIsModalVisible(true)}
+        >
+          กำหนดเวลาจองล่วงหน้า
+        </Button>
+      </div>
 
       <Row gutter={[8, 8]} style={{ marginTop: "20px" }}>
         <Col span={4}>
@@ -323,11 +333,13 @@ function Home() {
               </div>
             }
           >
-            <Table
-              dataSource={reservations.slice(0, 2)}
-              columns={columns}
-              pagination={false}
-            />
+            <Link to="/bookings/reservations">
+              <Table
+                dataSource={reservations.slice(0, 2)}
+                columns={columns}
+                pagination={false}
+              />
+            </Link>
           </Card>
         </Col>
         <Col span={12}>
@@ -352,11 +364,13 @@ function Home() {
               </div>
             }
           >
-            <Table
-              dataSource={shuttleCalls.slice(0, 2)}
-              columns={shuttleColumns}
-              pagination={false}
-            />
+            <Link to="/shuttle">
+              <Table
+                dataSource={shuttleCalls.slice(0, 2)}
+                columns={shuttleColumns}
+                pagination={false}
+              />
+            </Link>
           </Card>
         </Col>
       </Row>
@@ -375,23 +389,23 @@ function Home() {
       </Row>
 
       <Modal
-      title="ตั้งค่าเวลาจองล่วงหน้า"
-      visible={isModalVisible}
-      onOk={updateTimeSetting}
-      onCancel={() => setIsModalVisible(false)}
-    >
-      <Select
-        value={timeSetting} 
-        onChange={(value) => setTimeSetting(value)} 
-        style={{ width: '100%' }} 
+        title="ตั้งค่าเวลาจองล่วงหน้า"
+        visible={isModalVisible}
+        onOk={updateTimeSetting}
+        onCancel={() => setIsModalVisible(false)}
       >
-        {[...Array(25).keys()].map((hour) => (
-          <Option key={hour} value={hour}>
-            {hour} ชั่วโมง
-          </Option>
-        ))}
-      </Select>
-    </Modal>
+        <Select
+          value={timeSetting}
+          onChange={(value) => setTimeSetting(value)}
+          style={{ width: "100%" }}
+        >
+          {[...Array(25).keys()].map((hour) => (
+            <Option key={hour} value={hour}>
+              {hour} ชั่วโมง
+            </Option>
+          ))}
+        </Select>
+      </Modal>
     </div>
   );
 }

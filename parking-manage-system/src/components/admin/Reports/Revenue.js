@@ -6,7 +6,6 @@ import isBetween from 'dayjs/plugin/isBetween';
 import { Chart, registerables } from 'chart.js';
 
 dayjs.extend(isBetween);
-
 Chart.register(...registerables);
 
 const Revenue = () => {
@@ -17,7 +16,7 @@ const Revenue = () => {
       monthlyRevenue: 0,
       totalRevenue: 0,
     });
-    const [dateRange, setDateRange] = useState([dayjs().startOf('month'), dayjs().endOf('month')]); // ตั้งค่าเริ่มต้นเป็นช่วงเดือนปัจจุบัน // เริ่มต้นเป็น null เพื่อให้ไม่มีค่ากำหนด
+    const [dateRange, setDateRange] = useState([dayjs().startOf('month'), dayjs().endOf('month')]);
     const [viewMode, setViewMode] = useState('daily'); 
 
     useEffect(() => {
@@ -25,7 +24,6 @@ const Revenue = () => {
           const response = await fetch('http://localhost:5000/api/receipts');
           const result = await response.json();
   
-          // จัดกลุ่มข้อมูลตามวันที่และรวมรายได้
           const groupedData = result.reduce((acc, curr) => {
               const date = dayjs(curr.Receipt_DateTime).format('YYYY-MM-DD');
               const existing = acc.find((item) => item.date === date);
@@ -40,16 +38,14 @@ const Revenue = () => {
               }
               return acc;
           }, []);
-  
-          // จัดเรียงข้อมูลตามวันที่จากเก่ามาใหม่
+
           const sortedData = groupedData.sort((a, b) => dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1);
   
-          // เลือกแค่ 5 วันที่ล่าสุด
           const recentData = sortedData.slice(-5);
   
-          setAllData(groupedData);  // เก็บข้อมูลทั้งหมด
-          setDisplayData(recentData); // แสดงเฉพาะ 5 วันที่ล่าสุด
-          calculateSummary(recentData);
+          setAllData(groupedData); 
+          setDisplayData(recentData);
+          calculateSummary(groupedData); // Calculate summary based on all grouped data
       };
   
       fetchData();
@@ -85,8 +81,7 @@ const handleDateChange = (dates) => {
 
           const sortedData = filteredData.sort((a, b) => dayjs(a.date).isAfter(dayjs(b.date)) ? 1 : -1);
 
-          // เรียกใช้ calculateSummary กับข้อมูลที่กรอง
-          calculateSummary(sortedData);
+          calculateSummary(filteredData); // Calculate summary based on filtered data
           setDisplayData(sortedData);
       }
   } else {
@@ -95,7 +90,6 @@ const handleDateChange = (dates) => {
       calculateSummary(recentData);
   }
 };
-
 
 const handleViewModeChange = (mode) => {
   setViewMode(mode);
@@ -120,11 +114,10 @@ const handleViewModeChange = (mode) => {
     setDisplayData(sortedData);
   } else {
     if (dateRange[0] && dateRange[1]) {
-      handleDateChange(dateRange); // ใช้ dateRange ปัจจุบันในการคำนวณใหม่
+      handleDateChange(dateRange); 
     }
   }
 };
-
 
     const chartData = {
       labels: displayData.map(item => item.date), 
